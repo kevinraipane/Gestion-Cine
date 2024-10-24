@@ -13,7 +13,6 @@ public class Pelicula {
     private Idioma idioma;
     private Idioma idiomaSubtitulos;
     private Duration duracion;
-    private TipoSala  tipoSala;
     private String productor;
     private String director;
     private String añoLanzamiento;
@@ -22,14 +21,13 @@ public class Pelicula {
     private GeneroPelicula generoPelicula;
 
     //Constructor
-    public Pelicula(String titulo,Idioma idioma,Idioma idiomaSubtitulos,Duration duracion,TipoSala tipoSala, String productor,
+    public Pelicula(String titulo,Idioma idioma,Idioma idiomaSubtitulos,Duration duracion, String productor,
                     String director,String añoLanzamiento,String pais,ClasificacionEdad clasificacionEdad,
                     GeneroPelicula generoPelicula){
         this.titulo = titulo;
         this.idioma = idioma;
         this.idiomaSubtitulos = idiomaSubtitulos;
         this.duracion = duracion;
-        this.tipoSala = tipoSala; //Debe recibir el tipo de sala a usar para verificar con la asignada en funcion si corresponde
         this.productor = productor;
         this.director = director;
         this.añoLanzamiento = añoLanzamiento;
@@ -54,10 +52,6 @@ public class Pelicula {
 
     public Duration getDuracion() {
         return duracion;
-    }
-
-    public TipoSala getTipoSala() {
-        return tipoSala;
     }
 
     public String getProductor() {
@@ -98,10 +92,6 @@ public class Pelicula {
 
     public void setDuracion(Duration duracion) {
         this.duracion = duracion;
-    }
-
-    public void setTipoSala(TipoSala tipoSala) {
-        this.tipoSala = tipoSala;
     }
 
     public void setProductor(String productor) {
