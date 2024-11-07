@@ -7,22 +7,21 @@ import java.time.LocalDate;
 public abstract class Persona {
     //Atributos
     private String nombre;
-    private String apeliido;
+    private String apellido;
     private User user;
     private String dni;
     private String email;
     private LocalDate fechaNacimiento;
-    private EstadoUsuario estado;
+
 
     //Constructor //FALTAN VERIFICACIONES
-    public Persona(String nombre,String apeliido,String dni,String email,LocalDate fechaNacimiento){
+    public Persona(String nombre,String apellido,String dni,String email,LocalDate fechaNacimiento){
         this.nombre = nombre;
-        this.apeliido = apeliido;
+        this.apellido = apellido;
         this.user = new User(dni,dni);
         this.dni = dni;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
-        this.estado = EstadoUsuario.ALTA;
     }
 
     //Getters y Setters //FALTAN VERIFICACIONES
@@ -31,7 +30,7 @@ public abstract class Persona {
     }
 
     public String getApeliido() {
-        return apeliido;
+        return apellido;
     }
 
     public String getDni() {
@@ -46,16 +45,12 @@ public abstract class Persona {
         return fechaNacimiento;
     }
 
-    public EstadoUsuario getEstado() {
-        return estado;
-    }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
     public void setApeliido(String apeliido) {
-        this.apeliido = apeliido;
+        this.apellido = apeliido;
     }
 
     public void setDni(String dni) {

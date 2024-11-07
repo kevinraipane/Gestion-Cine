@@ -1,24 +1,26 @@
 package Modelos.Personas;
 
 import Enumeraciones.CargoEmpleado;
+import Enumeraciones.EstadoEmpleado;
 import Interfaces.IVisualizable;
 
 import java.time.LocalDate;
 
 public class Empleado extends Persona implements IVisualizable {
+
     //Atributos
     private int idEmpleado;
     private static int contadorId = 0;
     private CargoEmpleado cargo;
+    private EstadoEmpleado estado;
 
-    //Constructor, el constructor deberia recibir el rol no asignarlo por defecto
-    public Empleado(String nombre, String apeliido, String dni, String email, LocalDate fechaNacimiento,CargoEmpleado cargo){
-        super(nombre, apeliido, dni, email, fechaNacimiento);
+    public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento,CargoEmpleado cargo){
+        super(nombre, apellido, dni, email, fechaNacimiento);
         this.idEmpleado = contadorId++;
         this.cargo = cargo;
     }
 
-    //Gettets y Setters
+    //Getters y Setters
     public CargoEmpleado getCargo() {
         return cargo;
     }
@@ -27,10 +29,30 @@ public class Empleado extends Persona implements IVisualizable {
         this.cargo = cargo;
     }
 
-    //Metodos interfaz
-    /**
-     * void verCartelera();
-     * void verReservas(String dni, LocalDate dia);
-     * void verFunciones(LocalDate dia);
-     */
+    public EstadoEmpleado getEstado() {return estado; }
+
+    public void setEstado(EstadoEmpleado estado) { this.estado = estado; }
+
+    // METODOS
+
+    public boolean estaActivo() {
+        return estado.equals(EstadoEmpleado.ALTA);
+    }
+
+
+
+    @Override
+    public void verCartelera() {
+
+    }
+
+    @Override
+    public void verReservas() {
+
+    }
+
+    @Override
+    public void verFunciones() {
+
+    }
 }
