@@ -8,7 +8,7 @@ public abstract class Persona {
     //Atributos
     private String nombre;
     private String apellido;
-    private User user;
+    //private User user;
     private String dni;
     private String email;
     private LocalDate fechaNacimiento;
@@ -18,7 +18,7 @@ public abstract class Persona {
     public Persona(String nombre,String apellido,String dni,String email,LocalDate fechaNacimiento){
         this.nombre = nombre;
         this.apellido = apellido;
-        this.user = new User(dni,dni);
+        //this.user = new User(dni,dni);
         this.dni = dni;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
