@@ -1,12 +1,12 @@
 package Excepciones;
 
-public class NumButacaNegException extends ButacaInexistenteException{
+public class ButacaNegativaException extends ButacaInexistenteException{
 
-    public NumButacaNegException(){
+    public ButacaNegativaException(){
         super("El número de butaca no puede ser negativo.");
     }
 
-    public NumButacaNegException(int numeroButaca) {
+    public ButacaNegativaException(int numeroButaca) {
         super("El número de butaca no puede ser negativo: " + numeroButaca + ".");
     }
 

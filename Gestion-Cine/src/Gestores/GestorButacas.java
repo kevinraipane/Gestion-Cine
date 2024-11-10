@@ -1,7 +1,7 @@
 package Gestores;
 
 import Excepciones.ButacaInexistenteException;
-import Excepciones.NumButacaNegException;
+import Excepciones.ButacaNegativaException;
 import Modelos.Cine.Butaca;
 
 import java.util.HashMap;
@@ -22,13 +22,13 @@ public class GestorButacas {
         }
     }
 
-    //Métodos:
+    /* Métodos: */
 
     //Reservar:
 
     public void reservarButaca(int numButaca, String dniCliente) throws ButacaInexistenteException {
         if(numButaca < 0){
-            throw new NumButacaNegException(numButaca);
+            throw new ButacaNegativaException(numButaca);
             //Primero, comprueba que el numero no sea negativo.
         }
         if(!butacas.containsKey(numButaca)){
