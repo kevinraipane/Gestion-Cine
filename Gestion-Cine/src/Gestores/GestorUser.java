@@ -1,6 +1,7 @@
 package Gestores;
 
 import Excepciones.UserNoEncontradoException;
+import Excepciones.UsuarioYaExisteException;
 import Interfaces.ICRUD;
 import Modelos.Personas.User;
 
@@ -23,32 +24,38 @@ public class GestorUser implements ICRUD<User> {
         cargarUsuarios();//Cargar los usuarios desde el archivo JSON al iniciar
     }
 
+
     //Agregar un nuevo user
     @Override
-    public void create(User user){
+    public void create(User user)
+        throws UsuarioYaExisteException {
         if(usuarios.add(user)){
             guardarUsuarios();//Guardo los cambios en JSON
             System.out.println("Usuario creado:" + user.getUsername());
         }else{
-            System.out.println("El usuario ya existe.");//Excepcion
+            throw new UsuarioYaExisteException("El usuario ya existe en el sistema.");
         }
     }
 
-    //Que dentro de la funcion llame a metodos para actualizar username o password
-    /*@Override
-    public void update(User user){
+    @Override
+    public void update(int idUsuario)
+        throws UserNoEncontradoException{
+        User usuario = buscarPorId(idUsuario);
+        if(usuario != null){
 
+        }
     }
-     */
 
     //Buscar un usuario
     @Override
-    public User buscar(User user) {
+    public User buscarPorId(int idUsuario)
+        throws UserNoEncontradoException{
         for(User u : usuarios){
-            if(u.equals(user)){
+            if(u.getId_usuario() == idUsuario){
                 return u;
             }
-        }//Excepcion
+        }
+        throw new UserNoEncontradoException("El usuario no existe en el sistema.");
     }
 
     //Eliminar usuario
