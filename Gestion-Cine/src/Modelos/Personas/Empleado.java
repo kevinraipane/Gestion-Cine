@@ -15,7 +15,7 @@ public class Empleado extends Persona implements IVisualizable {
     private EstadoEmpleado estado;
 
     public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento,CargoEmpleado cargo){
-        super(nombre, apellido, dni, email, fechaNacimiento);
+        super();
         this.idEmpleado = contadorId++;
         this.cargo = cargo;
     }
