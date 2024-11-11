@@ -8,19 +8,29 @@ import java.time.LocalDate;
 
 public class Empleado extends Persona implements IVisualizable {
 
-    //Atributos
+    /// ATRIBUTOS
+
     private int idEmpleado;
     private static int contadorId = 0;
     private CargoEmpleado cargo;
     private EstadoEmpleado estado;
+    private LocalDate fechaIngreso;
 
-    public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento,CargoEmpleado cargo){
-        super();
+    final static int mesesDePrueba = 6;
+
+
+    /// CONSTRUCTOR
+
+    public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento, CargoEmpleado cargo){
+        super(nombre, apellido, dni, email, fechaNacimiento);
         this.idEmpleado = contadorId++;
         this.cargo = cargo;
+        this.estado = EstadoEmpleado.A_PRUEBA;
+        this.fechaIngreso = LocalDate.now();
     }
 
-    //Getters y Setters
+    ///GETTERS Y SETTERS
+
     public CargoEmpleado getCargo() {
         return cargo;
     }
@@ -33,10 +43,18 @@ public class Empleado extends Persona implements IVisualizable {
 
     public void setEstado(EstadoEmpleado estado) { this.estado = estado; }
 
-    // METODOS
+
+    /// METODOS
 
     public boolean estaActivo() {
-        return estado.equals(EstadoEmpleado.ALTA);
+        return (estado.equals(EstadoEmpleado.ALTA) || (estado.equals(EstadoEmpleado.A_PRUEBA)));
+    }
+
+    public void aPlantaPermanente() {
+        if (LocalDate.now().minusMonths(mesesDePrueba).isAfter(this.fechaIngreso)) {
+            this.estado = EstadoEmpleado.ALTA;
+        }
+
     }
 
 
