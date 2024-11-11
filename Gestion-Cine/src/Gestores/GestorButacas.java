@@ -1,10 +1,12 @@
 package Gestores;
 
+
 import Excepciones.ButacaEnEstadoActualException;
 import Excepciones.ButacaInexistenteException;
 import Modelos.Cine.Butaca;
 
 import java.util.TreeMap;
+
 
 public class GestorButacas {
 
@@ -17,7 +19,9 @@ public class GestorButacas {
     //Constructor:
 
     public GestorButacas(int totalButacas){
+
         butacas = new TreeMap<>();
+
         for(int i = 1; i <= totalButacas; i++){
             butacas.put(i, new Butaca(i));
         }
@@ -26,6 +30,7 @@ public class GestorButacas {
     /* Métodos: */
 
     //Reservar:
+
 
     public void reservarButaca(int numButaca, String dniCliente) throws ButacaInexistenteException, ButacaEnEstadoActualException {
 
@@ -56,13 +61,17 @@ public class GestorButacas {
 
     //Cancelar reserva:
 
+
     public void liberarButaca(int numButaca) throws ButacaInexistenteException, ButacaEnEstadoActualException{
+
         if(!butacas.containsKey(numButaca)){
             throw new ButacaInexistenteException(numButaca);
         }
         Butaca butaca = butacas.get(numButaca);
         if(butaca.getDniCliente() == null){
+
             throw new ButacaEnEstadoActualException("La butaca ya se encuentra libre.");
+
         }
         else{
             butaca.setDniCliente(null);

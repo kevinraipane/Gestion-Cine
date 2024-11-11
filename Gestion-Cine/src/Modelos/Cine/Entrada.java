@@ -33,6 +33,7 @@ public class Entrada {
         //manejaremos la excepción en menu.
     }
 
+
     public void liberarButaca(int numero) throws ButacaInexistenteException, ButacaEnEstadoActualException { //delegamos
         funcion.getSala().getTotalButacas().liberarButaca(numero);
         //manejaremos la excepción en menu.
