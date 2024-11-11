@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Personas;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

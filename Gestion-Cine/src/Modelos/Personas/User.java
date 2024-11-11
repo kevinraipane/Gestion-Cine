@@ -11,10 +11,10 @@ public class User {
     private String password; //Revisar como encriptarla y usar hashcode
 
     //Constructor
-    public User(){
+    public User(String username, String password){
         this.id_usuario = contadorID++;
         this.username = username;
-        this.password = contraseña;
+        this.password = password;
     }
 
     //Getters y Setters (Faltan verificaciones)
@@ -65,7 +65,7 @@ public class User {
         }
 
 
-        return aux;
+        return "";
     }
 
     //Metodo para recibir una contraña, y verificarla

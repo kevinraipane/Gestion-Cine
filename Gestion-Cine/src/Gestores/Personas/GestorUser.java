@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Personas;
 
 import Excepciones.UserNoEncontradoException;
 import Excepciones.UsuarioYaExisteException;
@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GestorUser implements ICRUD<User> {
+/* public class GestorUser implements ICRUD<User> {
     private Set<User> usuarios;
     private static final String FILE_PATH = "usuarios.json";
 
@@ -87,6 +87,7 @@ public class GestorUser implements ICRUD<User> {
      * deserializar correctamente el JSON en un HashSet<Usuario>.
      */
 
+/*
     //Guardar usuarios en un archivo JSON
     private void guardarUsuarios(){
         Gson gson = new Gson();
@@ -97,3 +98,4 @@ public class GestorUser implements ICRUD<User> {
         }
     }
 }
+ */
