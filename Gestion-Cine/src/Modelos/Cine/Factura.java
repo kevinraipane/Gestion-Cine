@@ -1,6 +1,6 @@
 package Modelos.Cine;
 
-import Gestores.GestorEntradas;
+import Gestores.Cine.GestorEntradas;
 import Modelos.Personas.Cliente;
 
 import java.util.Date;

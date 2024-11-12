@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Cine;
 
 import Modelos.Cine.Funcion;
 
@@ -14,7 +14,7 @@ public class GestorFunciones {
     //Constructor:
 
     public GestorFunciones(){
-
+        this.funciones = new HashMap<>();
     }
 
 }

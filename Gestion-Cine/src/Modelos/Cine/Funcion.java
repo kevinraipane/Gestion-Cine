@@ -1,14 +1,15 @@
 package Modelos.Cine;
 
 import Enumeraciones.EstadoFuncion;
+import Modelos.General.BaseEntity;
 
 import java.util.Objects;
 
-public class Funcion {
+public class Funcion extends BaseEntity<Integer> {
 
     //Atributos:
 
-    private int idFuncion;
+    //private int idFuncion;
     public static int contador = 0;
     private Pelicula pelicula;
     private Sala sala;
@@ -19,7 +20,8 @@ public class Funcion {
     //Constructor:
 
     public Funcion(Pelicula pelicula, Sala sala, Horario horario, double valor, EstadoFuncion estadoFuncion) {
-        this.idFuncion = ++contador;
+        //this.idFuncion = ++contador;
+        super(++contador);
         this.pelicula = pelicula;
         this.sala = sala;
         this.horario = horario;
@@ -30,7 +32,8 @@ public class Funcion {
     //Getters y setters:
 
     public int getIdFuncion() {
-        return idFuncion;
+        //return idFuncion;
+        return getAtributoIdentificador();
     }
 
     public Pelicula getPelicula() {
@@ -75,7 +78,7 @@ public class Funcion {
 
     //Equals y HashCode:
 
-    @Override
+    /*@Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
@@ -86,13 +89,26 @@ public class Funcion {
     @Override
     public int hashCode() {
         return Objects.hashCode(idFuncion);
+    }*/
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Funcion funcion = (Funcion) object;
+        return Objects.equals(getIdFuncion(), funcion.getIdFuncion());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode());
     }
 
     //toString:
 
     public String toString() {
         return  "\n-----------------\n" +
-                "Id de la función: " + idFuncion + ".\n" +
+                "Id de la función: " + /*idFuncion*/ getIdFuncion() + ".\n" +
                 "Película: " + pelicula + ".\n" +
                 "Sala: " + sala + ".\n" +
                 "Horario: " + horario + ".\n" +

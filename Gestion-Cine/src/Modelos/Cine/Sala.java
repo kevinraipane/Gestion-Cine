@@ -2,10 +2,8 @@ package Modelos.Cine;
 
 import Enumeraciones.EstadoSala;
 import Enumeraciones.TipoSala;
-import Excepciones.ButacaInexistenteException;
-import Gestores.GestorButacas;
+import Gestores.Cine.GestorButacas;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Sala {

@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Cine;
 
 
 import Excepciones.ButacaEnEstadoActualException;

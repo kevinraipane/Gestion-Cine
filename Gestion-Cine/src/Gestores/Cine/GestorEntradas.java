@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Cine;
 
 import Modelos.Cine.Entrada;
 
