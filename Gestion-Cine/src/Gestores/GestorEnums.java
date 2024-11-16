@@ -41,4 +41,15 @@ public class GestorEnums <T extends Enum<T>>{
         }
     }
 
+    public String formatearEnum(T constante){
+        String texto = constante.name();
+        String inicial = texto.substring(0,1).toUpperCase();
+        String resto = texto.substring(1).toLowerCase();
+
+        return (inicial + resto).replace("_", " ");
+    }
+
+
+
+
 }

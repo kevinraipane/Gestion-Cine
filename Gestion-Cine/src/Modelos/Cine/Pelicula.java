@@ -2,6 +2,7 @@ package Modelos.Cine;
 
 import Enumeraciones.*;
 import Excepciones.NumeroFueraDelRangoException;
+import Excepciones.SeleccionInvalidaException;
 import Excepciones.SoloNumerosException;
 import Excepciones.StringEnBlancoException;
 import Gestores.GestorEnums;
@@ -13,6 +14,8 @@ import java.util.Scanner;
 
 public class Pelicula{
     //Atributos
+    public static int contador = 0;
+    public int id;
     private String titulo;
     private Idioma idioma;
     private Idioma idiomaSubtitulos;
@@ -23,12 +26,13 @@ public class Pelicula{
     private Paises pais;
     private ClasificacionEdad clasificacionEdad;
     private GeneroPelicula generoPelicula;
+    private EstadoPelicula estadoPelicula;
 
     //Constructor
     public Pelicula(String titulo,Idioma idioma,Idioma idiomaSubtitulos,Duration duracion, String productor,
                     String director,int añoLanzamiento,Paises pais,ClasificacionEdad clasificacionEdad,
-                    GeneroPelicula generoPelicula){
-
+                    GeneroPelicula generoPelicula, EstadoPelicula estadoPelicula){
+        this.id = ++contador;
         this.titulo = titulo;
         this.idioma = idioma;
         this.idiomaSubtitulos = idiomaSubtitulos;
@@ -39,16 +43,18 @@ public class Pelicula{
         this.pais = pais;
         this.clasificacionEdad = clasificacionEdad;
         this.generoPelicula = generoPelicula;
+        this.estadoPelicula = estadoPelicula;
     }
 
-    //------------------------------------------Contructor que no recibe parametros-------------------------------------
+    //------------------------------------------Constructor que no recibe parametros-------------------------------------
     public Pelicula(){
         Scanner entrada = new Scanner(System.in);
         int datosValidos = 0;
+        this.id = ++contador;
 
         while(datosValidos==0){ //Ingresar el titulo
             try{
-                this.setTitulo(ingresarTitulo(entrada));
+                ingresarTitulo(entrada);
                 datosValidos++;
             }catch (StringEnBlancoException e){
                 System.out.println(e.getMessage());
@@ -93,7 +99,7 @@ public class Pelicula{
             }
         }
 
-        entrada.nextLine(); //Consume el salto de linea que sobra, sino se saltea el ingreso del nombre en la proxima funcion
+        entrada.nextLine(); //Consume el salto de línea que sobra, sino se saltea el ingreso del nombre en la proxima funcion
 
         while(datosValidos==4){ //Ingresar el productor
             try{
@@ -166,23 +172,64 @@ public class Pelicula{
             }
         }
 
+        while(datosValidos==10){ //Ingresar el EstadoPelicula
+            try{
+                System.out.println("Seleccione el estado de la pelicula:\n");
+                this.setEstadoPelicula(new GestorEnums<>(EstadoPelicula.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
         System.out.println("Estos son los datos ingresados" + this);
 
     }
 
-    ///-----------------------------------------Metodos que permiten el ingreso de datos--------------------------------
-    //                  (reciben Scanner por parametro porque es mas eficiente que iniciarlo en cada funcion)
+    //-----------------------Constructor que recibe solo título (para pruebas de coleccion)---------------------------
+
+    public Pelicula(String titulo){
+        this.id = ++contador;
+        this.titulo = titulo;
+        this.idioma = Idioma.INGLES;
+        this.idiomaSubtitulos = Idioma.ESPAÑOL;
+        this.duracion = Duration.ofMinutes(123);
+        this.productor = "productor";
+        this.director = "director";
+        this.añoLanzamiento = 2024;
+        this.pais = Paises.ESTADOS_UNIDOS;
+        this.clasificacionEdad = ClasificacionEdad.MAS_13;
+        this.generoPelicula = GeneroPelicula.ACCION;
+        this.estadoPelicula = EstadoPelicula.EN_CARTELERA;
+    }
+
+    //-----------------------------------------Metodos que permiten el ingreso de datos--------------------------------
+    //                  (reciben Scanner por parametro porque es más eficiente que iniciarlo en cada funcion)
     public String ingresarTitulo(Scanner entrada) throws StringEnBlancoException {
-        System.out.println("Ingrese el titulo de la pelicula:");
+        System.out.println("Ingrese el título de la pelicula:");
         String aux = entrada.nextLine();
         if(aux.isBlank()){
             throw new StringEnBlancoException("ERROR: No se ha ingresado texto");
         }else{
             return aux;
         }
+
+
+        /*
+        while(datosValidos==0){ //Ingresar el titulo
+            try{
+                this.setTitulo(ingresarTitulo(entrada));
+                datosValidos++;
+            }catch (StringEnBlancoException e){
+                System.out.println(e.getMessage());
+            }
+        }
+
+         */
     }
-
-
 
     public Idioma seleccionarIdioma(Scanner entrada) throws NumeroFueraDelRangoException, SoloNumerosException {
         new GestorEnums<>(Idioma.class).listarEnum();
@@ -226,7 +273,7 @@ public class Pelicula{
         apellido = entrada.nextLine();
 
         if (nombre.isBlank() || apellido.isBlank()){
-            throw new StringEnBlancoException("ERROR: No pueden haber campos en blanco");
+            throw new StringEnBlancoException();
         }else{
             return nombre + " " + apellido;
             }
@@ -252,32 +299,215 @@ public class Pelicula{
         }
     }
 
+    public boolean confirmacion(Scanner entrada) throws StringEnBlancoException, SeleccionInvalidaException{
+        System.out.println("Desea continuar modificando? S/N");
+        String respuesta = entrada.nextLine();
+        if (respuesta.equalsIgnoreCase("S")){
+            return true;
+        } else if (respuesta.equalsIgnoreCase("N")) {
+            return false;
+        } else if (respuesta.isBlank()) {
+            throw new StringEnBlancoException();
+        }else{
+            throw new SeleccionInvalidaException();
+        }
+    }
 
+    public void crearModificarPelicula(Scanner entrada){
+        int opcion = 0;
+        boolean salirBucle = true;
+        menuDatos();
+        if(entrada.hasNextInt()){
+            opcion = entrada.nextInt();
+            entrada.nextLine();
+            if(opcion>0 || opcion<11){
+                switch (opcion){
+                    case 1://Ingresar el titulo
+                        do {
+                            try{
+                                this.setTitulo(ingresarTitulo(entrada));
+                                salirBucle=true;
+                            }catch (StringEnBlancoException e){
+                                System.out.println(e.getMessage());
+                            }finally {
+                                salirBucle = confirmacion(entrada);
+                            }
+                        }while(salirBucle);
+
+
+//Ver como hacer una funcion mas prolija que permita hacer las dos cosas
+
+                        break;
+                }
+            }
+        }else {
+            throw new SoloNumerosException();
+        }
+
+
+
+
+
+
+
+        while(datosValidos==1){ //Seleccionar el idioma
+            try{
+                System.out.println("Seleccione el idioma de la pelicula: ");
+                this.setIdioma(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==2){ //Seleccionar el idioma de los subtitulos
+            try{
+                System.out.println("\nSeleccione el idioma de los subtitulos: ");
+                this.setIdiomaSubtitulos(seleccionarIdioma(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==3){ //Ingresar la duracion
+            try{
+                this.setDuracion(ingresarDuracion(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        entrada.nextLine(); //Consume el salto de línea que sobra, sino se saltea el ingreso del nombre en la proxima funcion
+
+        while(datosValidos==4){ //Ingresar el productor
+            try{
+                System.out.println("Productor:");
+                this.setProductor(ingresarNombreCompleto(entrada));
+                datosValidos++;
+            }catch (StringEnBlancoException e){
+                System.out.println(e.getMessage());
+            }
+        }
+
+        while(datosValidos==5){ //Ingresar el director
+            try{
+                System.out.println("Director:");
+                this.setDirector(ingresarNombreCompleto(entrada));
+                datosValidos++;
+            }catch (StringEnBlancoException e){
+                System.out.println(e.getMessage());
+            }
+        }
+
+        while(datosValidos==6){ //Ingresar el año
+            try{
+                this.setAñoLanzamiento(ingresarAño(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==7){ //Ingresar el pais
+            try{
+                System.out.println("Seleccione el pais de origen:\n");
+                this.setPais(new GestorEnums<>(Paises.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==8){ //Ingresar la clasificacion por Edad
+            try{
+                System.out.println("Seleccione la clasificacion por edad:\n");
+                this.setClasificacionEdad(new GestorEnums<>(ClasificacionEdad.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==9){ //Ingresar el generoPelicula
+            try{
+                System.out.println("Seleccione el genero de la pelicula:\n");
+                this.setGeneroPelicula(new GestorEnums<>(GeneroPelicula.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        while(datosValidos==10){ //Ingresar el EstadoPelicula
+            try{
+                System.out.println("Seleccione el estado de la pelicula:\n");
+                this.setEstadoPelicula(new GestorEnums<>(EstadoPelicula.class).seleccionarElemento(entrada));
+                datosValidos++;
+            }catch (NumeroFueraDelRangoException e){
+                System.out.println(e.getMessage());
+            }catch (SoloNumerosException e){
+                System.out.println(e.getMessage());
+                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
+            }
+        }
+
+        System.out.println("Estos son los datos ingresados" + this);
+
+
+        return modificar;
+    }
 
     //-----------------------------------------------------Metodos que printean-----------------------------------------
     @Override
     public String toString() {
+
         return "\n------------------" +
+                "\nID: " + id +
                 "\nTitulo: " + titulo +
-                "\nIdioma: " + idioma +
-                "\nIdioma Subtitulos: " + idiomaSubtitulos +
+                "\nIdioma: " + new GestorEnums<>(Idioma.class).formatearEnum(idioma)   +
+                "\nSubtitulos: " + new GestorEnums<>(Idioma.class).formatearEnum(idiomaSubtitulos)   +
                 "\nDuracion: " + convertirDuracion(duracion)  +
                 "\nProductor: " + productor +
                 "\nDirector: " + director +
                 "\nAño De Lanzamiento: " + añoLanzamiento +
-                "\nPais: " + pais +
-                "\nClasificacion Por Edad:" + clasificacionEdad +
-                "\nGenero: " + generoPelicula;
+                "\nPais: " + new GestorEnums<>(Paises.class).formatearEnum(pais) +
+                "\nClasificacion Por Edad: " + new GestorEnums<>(ClasificacionEdad.class).formatearEnum(clasificacionEdad) +
+                "\nGenero: " + new GestorEnums<>(GeneroPelicula.class).formatearEnum(generoPelicula) +
+                "\nEstado: " + new GestorEnums<>(EstadoPelicula.class).formatearEnum(estadoPelicula);
     }
 
     public String fichaTecnicaResumen() {
-        return "\n------------------" +
+        return "---------------------------------------------------------------" +
                 "\nTitulo: " + titulo +
-                "\nIdioma: " + idioma +
-                "\nIdioma Subtitulos: " + idiomaSubtitulos +
-                "\nDuracion: " + duracion +
-                "\nClasificacion Por Edad:" + clasificacionEdad +
-                "\nGenero: " + generoPelicula;
+                "\nIdioma: " + new GestorEnums<>(Idioma.class).formatearEnum(idioma)   +
+                "\nSubtitulos: " + new GestorEnums<>(Idioma.class).formatearEnum(idiomaSubtitulos)   +
+                "\nDuracion: " + convertirDuracion(duracion) +
+                "\nClasificacion Por Edad:" + new GestorEnums<>(ClasificacionEdad.class).formatearEnum(clasificacionEdad) +
+                "\nGenero: " + new GestorEnums<>(GeneroPelicula.class).formatearEnum(generoPelicula) +
+                "\nEstado: " + new GestorEnums<>(EstadoPelicula.class).formatearEnum(estadoPelicula);
     }
 
     public String convertirDuracion(Duration tiempo) {
@@ -287,9 +517,27 @@ public class Pelicula{
         return horas + "hs " + minutos + "mins (" + tiempo.toMinutes() + " mins en total)";
     }
 
+    public String menuDatos(){
+        return
+                "\n[1] Titulo" +
+                "\n[2] Idioma" +
+                "\n[3] Idioma de los subtitulos" +
+                "\n[4] Duracion" +
+                "\n[5] Productor" +
+                "\n[6] Director" +
+                "\n[7] Año de lanzamiento" +
+                "\n[8] Pais" +
+                "\n[9] Clasificacion por edad" +
+                "\n[10] Genero" +
+                "\n[11] Estado";
 
+    }
 
     //-----------------------------------------------------Getters y Setters--------------------------------------------
+
+    public int getId() {
+        return id;
+    }
 
     public String getTitulo() {
         return titulo;
@@ -329,6 +577,10 @@ public class Pelicula{
 
     public GeneroPelicula getGeneroPelicula() {
         return generoPelicula;
+    }
+
+    public EstadoPelicula getEstadoPelicula() {
+        return estadoPelicula;
     }
 
     public void setTitulo(String titulo) {
@@ -371,5 +623,7 @@ public class Pelicula{
         this.generoPelicula = generoPelicula;
     }
 
-
+    public void setEstadoPelicula(EstadoPelicula estadoPelicula) {
+        this.estadoPelicula = estadoPelicula;
+    }
 }
