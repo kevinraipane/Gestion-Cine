@@ -3,21 +3,33 @@ package Modelos.General;
 import Enumeraciones.CollectionOrMap;
 import Enumeraciones.TipoColeccion;
 import Excepciones.ColeccionInvalidaException;
-import Excepciones.ElementoExisteEnColeccionException;
-import Modelos.Cine.Butaca;
-import Modelos.Cine.Entrada;
-
+import Excepciones.ColeccionVaciaException;
+import Excepciones.ElementoEnColeccionException;
+import Excepciones.ElementoNoEncontradoException;
 import java.util.*;
+import java.util.function.Predicate;
 
-public class Crud <T extends BaseEntity, K>{
+
+public class Crud <K, T>{
+    //Si no trabajan con par clave-valor le pasan Void de primer parametro, pq clave:vacia.
+    //Ej: Crud<Void, Persona> crudGestorPersonas;
+    //En este caso, cuando llamen a agregar sólo necesitan pasarle un atributo (el objeto a agregar
+    //en la lista, sin claves).
+
+    //La clase recibe "K" para las claves de maps.
+    //Y "T" para las collections y los valores de maps.
 
     //Atributos:
 
     private Collection<T> collection;
     private Map<K, T> map;
-    private CollectionOrMap heredaDe;
+    private CollectionOrMap implementa;//Para verificar si se creó
+                                       //una colección de clave-valor
+                                       //o una de un solo valor en el
+                                       //constructor. Ya que el comportamiento
+                                       //varía entre un tipo y otro.
 
-    //Constructor:
+    //Constructor (recibe un enum de los tipos de colecciones vistas):
 
     public Crud(TipoColeccion eleccionColeccion) throws ColeccionInvalidaException{ //manejar excepcionmes
                                                                                     //cuando se llame
@@ -31,17 +43,17 @@ public class Crud <T extends BaseEntity, K>{
             case LINKEDHASHSET:
             case TREESET:
                 collection = crearCollection(eleccionColeccion);
-                heredaDe = CollectionOrMap.COLLECTION;
+                implementa = CollectionOrMap.COLLECTION;
                 break;
             case HASHMAP:
             case LINKEDHASHMAP:
             case TREEMAP:
                 map = crearMap(eleccionColeccion);
-                heredaDe = CollectionOrMap.MAP;
+                implementa = CollectionOrMap.MAP;
                 break;
             default: //Sé que no es requerido por trabajar con enums... pero da mayor flexibilidad para
                      //posibles cambios futuros.
-                     throw new ColeccionInvalidaException("Colección no soportada.");
+                     throw new ColeccionInvalidaException();
         }
     }
 
@@ -52,48 +64,53 @@ public class Crud <T extends BaseEntity, K>{
     // -------------------------------------------------------------------------- //
 
     public Collection<T> crearCollection(TipoColeccion tipo) throws ColeccionInvalidaException {
-        switch (tipo) {
-            case ARRAYLIST: return new ArrayList<>();
-            case LINKEDLIST: return new LinkedList<>();
-            case VECTOR: return new Vector<>();
-            case HASHSET: return new HashSet<>();
-            case LINKEDHASHSET: return new LinkedHashSet<>();
-            case TREESET: return new TreeSet<>();
-            default: throw new ColeccionInvalidaException("Colección no soportada.");
-        }
+        return switch (tipo) {
+            case ARRAYLIST -> new ArrayList<>();
+            //Equivalente a:
+            //case ARRAYLIST: return new ArrayList<>();
+            case LINKEDLIST -> new LinkedList<>();
+            case VECTOR -> new Vector<>();
+            case HASHSET -> new HashSet<>();
+            case LINKEDHASHSET -> new LinkedHashSet<>();
+            case TREESET -> new TreeSet<>();
+            default -> throw new ColeccionInvalidaException();
+        };
     }
 
     public Map<K, T> crearMap(TipoColeccion tipo) throws ColeccionInvalidaException {
-        switch (tipo) {
-            case HASHMAP: return new HashMap<>();
-            case LINKEDHASHMAP: return new LinkedHashMap<>();
-            case TREEMAP: return new TreeMap<>();
-            default: throw new ColeccionInvalidaException("Colección no soportada.");
-        }
+        return switch (tipo) {
+            case HASHMAP -> new HashMap<>();
+            case LINKEDHASHMAP -> new LinkedHashMap<>();
+            case TREEMAP -> new TreeMap<>();
+            default -> throw new ColeccionInvalidaException();
+        };
     }
 
     // -------------------------------------------------------------------------- //
 
-    //Métodos de inserción:
+    //Método de inserción:
 
     // -------------------------------------------------------------------------- //
 
-    public void agregar(K key, T objeto, boolean permitirDuplicados) throws ElementoExisteEnColeccionException {
-        if(heredaDe == CollectionOrMap.COLLECTION){
+    public void agregar(K key /*solo si es map*/, T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException {
+        if(implementa == CollectionOrMap.COLLECTION){
             if(permitirDuplicados || !collection.contains(objeto)){
                 collection.add(objeto);
+                System.out.println("Elemento agregado con éxito.");
             }
             else{
-                throw new ElementoExisteEnColeccionException("Error: La colección ya contiene ese elemento.");
+                throw new ElementoEnColeccionException(CollectionOrMap.COLLECTION);
             }
         }
-        else if(heredaDe == CollectionOrMap.MAP){
+        else if(implementa == CollectionOrMap.MAP){
             if (!map.containsKey(key)){
                 map.put(key, objeto);
+                System.out.println("Elemento agregado con éxito.");
             }
-            throw new ElementoExisteEnColeccionException("Error: La colección ya contiene este objeto.");
+            throw new ElementoEnColeccionException(CollectionOrMap.MAP);
         }
     }
+
 
     // -------------------------------------------------------------------------- //
 
@@ -101,31 +118,106 @@ public class Crud <T extends BaseEntity, K>{
 
     // -------------------------------------------------------------------------- //
 
-    public T buscar(K id) { // Usamos K porque es el tipo de la clave en el map
-        if (heredaDe == CollectionOrMap.COLLECTION) {
+    //Recorrer una collection y esperar de retorno 1 elemento:
+
+    public T buscarUnicoElementoCollection(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException {
+        if(implementa == CollectionOrMap.COLLECTION){
             if (!collection.isEmpty()){
-                return buscarEnCollection(id);
+                for(T elemento : collection){
+                    if(condicion.test(elemento)){
+                        return elemento;
+                    }
+                }
             }
-        } else if (heredaDe == CollectionOrMap.MAP) {
-            if (!map.isEmpty()){
-                return buscarEnMap(id);
-            }
-        }
-        return null;
-    }
-
-    public T buscarEnCollection(K atributoIdentificador) {
-        for (T item : collection) {
-            if (item.getAtributoIdentificador().equals(atributoIdentificador)) {
-                return item;
+            else {
+                throw new ColeccionVaciaException();
             }
         }
-        return null;
+        else{
+            throw new ColeccionInvalidaException(CollectionOrMap.MAP);
+        }
+
+        return null; //No se encontró. Validar tras la invocación del método.
     }
 
-    public T buscarEnMap(K key) {
-        return map.get(key);
+    //Recorrer una collection y esperar de retorno 1 o más elementos coincidentes:
+
+    public List<T> buscarConjuntoCollection(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException{
+
+        List<T> resultados = new ArrayList<>();
+
+        if(implementa == CollectionOrMap.COLLECTION){
+            if (!collection.isEmpty()){
+                for(T elemento : collection){
+                    if(condicion.test(elemento)){
+                        resultados.add(elemento);
+                    }
+                }
+            }
+            else {
+                throw new ColeccionVaciaException();
+            }
+        }
+        else{
+            throw new ColeccionInvalidaException(CollectionOrMap.MAP);
+        }
+
+        return resultados; //cuando llamen a este método, controlen si la colección no quedó vacía
+        // (lo que indicaría que no se encontró ningún elemento).
     }
+
+    //Recorrer un map y esperar de retorno el único elemento correspondiente con la clave:
+
+    public T buscarEnMapPorClave(K key) throws ColeccionVaciaException, ColeccionInvalidaException{
+        if (implementa == CollectionOrMap.MAP){
+            if(!map.isEmpty()){
+                return map.get(key); //Null si no se encontró, validar en invocación de método.
+            }
+            else{
+                throw new ColeccionVaciaException();
+            }
+        }
+        else{
+            throw new ColeccionInvalidaException(CollectionOrMap.COLLECTION);
+        }
+    }
+
+
+/*
+Ejemplo:
+
+Métodos de búsqueda en peli, usando filtrado:
+
+        private Crud<Pelicula, Integer> crudPeliculas; //Atributo Crud en peli.
+
+        public List<Pelicula> buscarPorDirector(String director) {
+            return crudPeliculas.buscarConjuntoCollection(pelicula -> pelicula.getDirector().equalsIgnoreCase(director));
+        }
+
+// Básicamente le decís buscame cada peli donde su director tenga X nombre. PDTA: No hace falta definir
+una instancia "pelicula" ni nada usando lambda, se define como una variable de referencia en el
+momento; similar a como hacés con un for each (Pelicula pelicula : peliculas), para referenciar al objeto dentro del for.
+
+        public List<Pelicula> buscarPorTitulo(String titulo) {
+            return crudPeliculas.filtrarConjuntoCollection(pelicula -> pelicula.getTitulo().equalsIgnoreCase(titulo));
+        }
+
+        public List<Pelicula> buscarPorFechaLanzamiento(int anio) {
+            return crudPeliculas.filtrarConjuntoCollection(pelicula -> pelicula.getFechaLanzamiento().getYear() == anio);
+        }
+
+Llamada del método desde gestor general:
+
+*El usuario quiere buscar pelis por director, escribe "Tim Burton"*
+
+        List<Pelicula> peliculasBurton = gestorPeliculas.buscarPorDirector("Tim Burton");
+
+        for (Pelicula pelicula : peliculasBurton) {
+            System.out.println(pelicula.getTitulo());
+        }
+
+        */
+
 
     // -------------------------------------------------------------------------- //
 
@@ -133,42 +225,110 @@ public class Crud <T extends BaseEntity, K>{
 
     // -------------------------------------------------------------------------- //
 
-    public void eliminar(K identificador /*o Clave para maps*/){
-        if(heredaDe == CollectionOrMap.COLLECTION){
-            T objeto = buscarEnCollection(identificador);
-            if(objeto != null){
-                collection.remove(objeto);
-                System.out.println("Elemento eliminado con éxito.");
-            }
-            else{
-                System.out.println("Elemento no encontrado.");
-            }
+    public void eliminarEnCollection(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException, ElementoNoEncontradoException {
+        T elementoPorEliminar = buscarUnicoElementoCollection(condicion);
+        if(elementoPorEliminar == null){
+            throw new ElementoNoEncontradoException();
         }
-        if (heredaDe == CollectionOrMap.MAP){
-            if (map.containsKey(identificador)){
-                map.remove(identificador);
-            }
-            else {
-                System.out.println("Elemento no encontrado.");
-            }
+        else{
+            collection.remove(elementoPorEliminar);
+            System.out.println("Eliminado.");
+        }
+    }
+
+    public void eliminarEnMap(K key) throws ColeccionVaciaException, ColeccionInvalidaException, ElementoNoEncontradoException{
+        if(!map.containsKey(key)){
+            throw new ElementoNoEncontradoException();
+        }
+        else{
+            map.remove(key);
+            System.out.println("Eliminado.");
         }
     }
 
     // -------------------------------------------------------------------------- //
 
-    //Métodos de listar:
+    //Métodos de mostrar:
 
-    public void listar(){ //RECORDAR HACER TO STRING EN CADA CLASE MODELO.
-        if(heredaDe == CollectionOrMap.COLLECTION){
-            for(T elemento : collection){
+    // -------------------------------------------------------------------------- //
+
+    public void listarTodos() throws ColeccionVaciaException{ //RECORDAR HACER TO STRING EN CADA CLASE MODELO.
+        if(implementa == CollectionOrMap.COLLECTION){
+            if (!collection.isEmpty()){
+                for(T elemento : collection){
+                    System.out.println(elemento);
+                }
+            }
+            else{
+                throw new ColeccionVaciaException();
+            }
+
+        }
+
+        else if(implementa == CollectionOrMap.MAP){
+            if (!map.isEmpty()){
+                for(Map.Entry<K, T> entry : map.entrySet()){
+                    System.out.println("Clave: " + entry.getKey() + ", Valor: " + entry.getValue());
+                }
+            }
+            else {
+                throw new ColeccionVaciaException();
+            }
+        }
+
+    }
+
+    public void listarEnCollectionPorCondicion(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException, ElementoNoEncontradoException{
+        List<T> coincidencias = buscarConjuntoCollection(condicion);
+        if (!coincidencias.isEmpty()){
+            for (T elemento : coincidencias){
                 System.out.println(elemento);
             }
         }
-        else if(heredaDe == CollectionOrMap.MAP){
-            for(Map.Entry<K, T> entry : map.entrySet()){
-                System.out.println("Clave: " + entry.getKey() + ", Valor: " + entry.getValue());
-            }
+        else{
+            throw new ElementoNoEncontradoException();
         }
+    }
+
+    public void mostrarUnicoElementoEnCollection(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException, ElementoNoEncontradoException{
+        T elementoEncontrado = buscarUnicoElementoCollection(condicion);
+        if(elementoEncontrado != null){
+            System.out.println(elementoEncontrado);
+        }
+        else{
+            throw new ElementoNoEncontradoException();
+        }
+    }
+
+
+    // -------------------------------------------------------------------------- //
+
+    // -------------------------------------------------------------------------- //
+
+    //Get colecciones:
+
+    public Collection<T> getCollection() /*throws ColeccionInvalidaException*/ {
+
+        // ¿Con o sin excepcion? Creo que con excepcion, cuando quieran verificar, en vez
+        //de hacerlo en un if, se haría en un try-with-resources (lo que usamos con archivos).
+
+        /*if(implementa == CollectionOrMap.COLLECTION){
+            return collection;
+        }
+        else{
+            throw new ColeccionInvalidaException(CollectionOrMap.MAP);
+        }*/
+        return collection;
+    }
+
+    public Map<K, T> getMap() /*throws ColeccionInvalidaException*/{
+        /*if(implementa == CollectionOrMap.MAP){
+            return map;
+        }
+        else{
+            throw new ColeccionInvalidaException(CollectionOrMap.COLLECTION);
+        }*/
+        return map;
     }
 
     // -------------------------------------------------------------------------- //
@@ -179,17 +339,19 @@ public class Crud <T extends BaseEntity, K>{
 
     // -------------------------------------------------------------------------- //
 
-    //Investigando, descubrí que para modificar campos individuales de un atributo genérico (el cual
+    //Investigando, descubrí que para modificarEnCollection campos individuales de un atributo genérico (el cual
     //yo no voy a saber de antemano qué atributos tendrá, ni cuántos, ni con qué nombre, ni de qué tipo
     //de dato) se necesita usar algo llamado "REFLEXIÓN"... pero me parece algo complejo de entender,
     //aprender y utilizar, con el poco tiempo que tenemos. Así que, bueno, en lugar de eso, le pediremos
     //al usuario que reingrese un dato de todos los posible dados los atributos de la clase.
-    //Así podrá modificar el que desee. Sé que sería inviable en proyectos grandes pero, al menos,
+    //Así podrá modificarEnCollection el que desee. Sé que sería inviable en proyectos grandes pero, al menos,
     //cumple con su función en éste, con el conocimiento que tenemos.
 
 
-    public void modificar(K identificador /*o Clave para maps*/){
-        if(heredaDe == CollectionOrMap.COLLECTION){
+    //Conclusión: Que cada gestor haga su Modificar, pq no pienso meterme ahí. (?)
+
+    /*public void modificarEnCollection(Predicate<T> condicion){
+        if(implementa == CollectionOrMap.COLLECTION){
             T objeto = buscarEnCollection(identificador);
             if(objeto != null){
 
@@ -197,37 +359,37 @@ public class Crud <T extends BaseEntity, K>{
                 //sólo funcionarán una vez las clases modelos hereden de Mother.
 
                 if(objeto instanceof Butaca){
-                    //Funcion modificar butaca: llama un método que contiene un switch y te da a elegir
-                    //qué atributo querés modificar en cada case.
+                    //Funcion modificarEnCollection butaca: llama un método que contiene un switch y te da a elegir
+                    //qué atributo querés modificarEnCollection en cada case.
                 }
                 else if(objeto instanceof Entrada){
-                    //Funcion modificar butaca: llama un método que contiene un switch y te da a elegir
-                    //qué atributo querés modificar en cada case.
+                    //Funcion modificarEnCollection butaca: llama un método que contiene un switch y te da a elegir
+                    //qué atributo querés modificarEnCollection en cada case.
                 }
 
                 /* Etc. */
 
-            }
+    /*        }
             else{
                 System.out.println("Elemento no encontrado.");
             }
         }
-        if (heredaDe == CollectionOrMap.MAP){
-            T objeto = buscarEnMap(identificador);
+        if (implementa == CollectionOrMap.MAP){
+            T objeto = buscarEnMapPorClave(identificador);
             if (objeto != null){
 
                 if(objeto instanceof Butaca){
-                    //Funcion modificar butaca
+                    //Funcion modificarEnCollection butaca
                 }
                 else if(objeto instanceof Entrada){
-                    //Funcion modificar entrada
+                    //Funcion modificarEnCollection entrada
                 }
             }
             else {
                 System.out.println("Elemento no encontrado.");
             }
         }
-    }
+    }*/
 
 
     // -------------------------------------------------------------------------- //

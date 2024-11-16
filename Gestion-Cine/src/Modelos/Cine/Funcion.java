@@ -1,15 +1,15 @@
 package Modelos.Cine;
 
 import Enumeraciones.EstadoFuncion;
-import Modelos.General.BaseEntity;
+//import Modelos.General.BaseEntity;
 
 import java.util.Objects;
 
-public class Funcion extends BaseEntity<Integer> {
+public class Funcion /*extends BaseEntity<Integer>*/ {
 
     //Atributos:
 
-    //private int idFuncion;
+    private int idFuncion;
     public static int contador = 0;
     private Pelicula pelicula;
     private Sala sala;
@@ -20,8 +20,8 @@ public class Funcion extends BaseEntity<Integer> {
     //Constructor:
 
     public Funcion(Pelicula pelicula, Sala sala, Horario horario, double valor, EstadoFuncion estadoFuncion) {
-        //this.idFuncion = ++contador;
-        super(++contador);
+        this.idFuncion = ++contador;
+        //super(++contador);
         this.pelicula = pelicula;
         this.sala = sala;
         this.horario = horario;
@@ -32,8 +32,8 @@ public class Funcion extends BaseEntity<Integer> {
     //Getters y setters:
 
     public int getIdFuncion() {
-        //return idFuncion;
-        return getAtributoIdentificador();
+        return idFuncion;
+        //return getAtributoIdentificador();
     }
 
     public Pelicula getPelicula() {
@@ -78,7 +78,7 @@ public class Funcion extends BaseEntity<Integer> {
 
     //Equals y HashCode:
 
-    /*@Override
+    @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
@@ -89,9 +89,9 @@ public class Funcion extends BaseEntity<Integer> {
     @Override
     public int hashCode() {
         return Objects.hashCode(idFuncion);
-    }*/
+    }
 
-    @Override
+    /*@Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
@@ -102,7 +102,7 @@ public class Funcion extends BaseEntity<Integer> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode());
-    }
+    }*/
 
     //toString:
 

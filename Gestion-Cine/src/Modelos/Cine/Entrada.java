@@ -4,15 +4,15 @@ import Enumeraciones.EstadoFuncion;
 import Enumeraciones.TipoTicket;
 import Excepciones.ButacaEnEstadoActualException;
 import Excepciones.ButacaInexistenteException;
-import Modelos.General.BaseEntity;
+//import Modelos.General.BaseEntity;
 
 import java.util.Objects;
 
-public class Entrada extends BaseEntity<Integer> {
+public class Entrada /*extends BaseEntity<Integer>*/ {
 
     //Atributos:
 
-    //private int idBoleta;
+    private int idBoleta;
     public static int contador = 0;
     private Funcion funcion;
     private TipoTicket tipoTicket;
@@ -21,8 +21,8 @@ public class Entrada extends BaseEntity<Integer> {
     //Constructor:
 
     public Entrada(Funcion funcion, TipoTicket tipoTicket, EstadoFuncion estadoFuncion) {
-        //this.idBoleta = ++contador;
-        super(++contador);
+        this.idBoleta = ++contador;
+        //super(++contador);
         this.funcion = funcion;
         this.tipoTicket = tipoTicket;
         this.estadoFuncion = estadoFuncion;
@@ -44,8 +44,8 @@ public class Entrada extends BaseEntity<Integer> {
     //Getters y setters:
 
     public int getIdBoleta() {
-        //return idBoleta;
-        return getAtributoIdentificador();
+        return idBoleta;
+        //return getAtributoIdentificador();
     }
 
     public Funcion getFuncion() {
@@ -79,14 +79,14 @@ public class Entrada extends BaseEntity<Integer> {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Entrada entrada = (Entrada) object;
-        //return idBoleta == entrada.idBoleta;
-        return Objects.equals(getIdBoleta(), entrada.getIdBoleta());
+        return idBoleta == entrada.idBoleta;
+        //return Objects.equals(getIdBoleta(), entrada.getIdBoleta());
     }
 
     @Override
     public int hashCode() {
-        //return Objects.hashCode(idBoleta);
-        return Objects.hash(super.hashCode());
+        return Objects.hashCode(idBoleta);
+        //return Objects.hash(super.hashCode());
     }
 
     //toString:

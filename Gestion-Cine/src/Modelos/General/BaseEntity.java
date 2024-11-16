@@ -1,7 +1,7 @@
 package Modelos.General;
 
 import java.util.Objects;
-
+/*
 public class BaseEntity<T extends Comparable<T>> { //Para que sigan un orden natural
 
     //Atributos:
@@ -42,4 +42,4 @@ public class BaseEntity<T extends Comparable<T>> { //Para que sigan un orden nat
         return Objects.hashCode(atributoIdentificador);
     }
 
-}
+}*/

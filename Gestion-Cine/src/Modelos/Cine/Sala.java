@@ -2,6 +2,8 @@ package Modelos.Cine;
 
 import Enumeraciones.EstadoSala;
 import Enumeraciones.TipoSala;
+import Excepciones.ColeccionInvalidaException;
+import Excepciones.ElementoEnColeccionException;
 import Gestores.Cine.GestorButacas;
 
 import java.util.Objects;
@@ -19,7 +21,7 @@ public class Sala {
 
     //Constructor:
 
-    public Sala(String numeroSala, TipoSala tipo, int totalButacas){
+    public Sala(String numeroSala, TipoSala tipo, int totalButacas) throws ColeccionInvalidaException, ElementoEnColeccionException {
         this.numeroSala = numeroSala;
         this.estado = EstadoSala.DISPONIBLE;
         this.tipo = tipo;
@@ -61,7 +63,7 @@ public class Sala {
         this.estado = estado;
     }
 
-    public void setTotalButacas(int totalButacas) {
+    public void setTotalButacas(int totalButacas) throws ColeccionInvalidaException, ElementoEnColeccionException {
         this.totalButacas = totalButacas;
         this.butacasDisponibles = new GestorButacas(totalButacas);
     }
