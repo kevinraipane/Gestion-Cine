@@ -1,12 +1,14 @@
 package Modelos.Cine;
 
+//import Modelos.General.BaseEntity;
+
 import java.util.Objects;
 
-public class Butaca {
+public class Butaca{
 
     /* Butaca tendrá su propia clase; así el código es más flexible y permite el día de
     mañana extender info de butacas (como tipo de butaca, precio según su ubicación, o
-    cualquier cosa que se desee modificar el día de mañana; principio abierto cerrado),
+    cualquier cosa que se desee modificarEnCollection el día de mañana; principio abierto cerrado),
     además así tenemos una clase que se encargue de gestionar butacas (su gestor, que será
     instanciado en Sala), mientras Sala sólo se encarga de ella misma (principio de
     responsabilidad única). */
@@ -41,22 +43,6 @@ public class Butaca {
         this.dniCliente = dniCliente;
     }
 
-    //toString:
-
-    @Override
-    public String toString() {
-        if(dniCliente == null){
-            return  "\n-----------------\n" +
-                    "Butaca número: " + numero + " disponible." +
-                    "." +
-                    "\n-----------------\n";
-        }
-        return  "\n-----------------\n" +
-                "Butaca número: " + numero + " reservada por cliente con DNI: " + dniCliente +
-                "." +
-                "\n-----------------\n";
-    }
-
     //Equals y HashCode:
 
     @Override
@@ -70,6 +56,36 @@ public class Butaca {
     @Override
     public int hashCode() {
         return Objects.hash(numero, dniCliente);
+    }
+
+    /*@Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
+        Butaca butaca = (Butaca) object;
+        return Objects.equals(dniCliente, butaca.dniCliente) && Objects.equals(getNumero(), butaca.getNumero());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), dniCliente);
+    }*/
+
+    //toString:
+
+    @Override
+    public String toString() {
+        if(dniCliente == null){
+            return  "\n-----------------\n" +
+                    "Butaca número: " + /*numero*/ getNumero() + " disponible." +
+                    "." +
+                    "\n-----------------\n";
+        }
+        return  "\n-----------------\n" +
+                "Butaca número: " + /*numero*/ getNumero() + " reservada por cliente con DNI: " + dniCliente +
+                "." +
+                "\n-----------------\n";
     }
 
 }

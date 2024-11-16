@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Cine;
 
 import Enumeraciones.ClasificacionEdad;
 import Enumeraciones.GeneroPelicula;
