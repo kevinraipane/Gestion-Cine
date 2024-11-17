@@ -57,7 +57,14 @@ public class Empleado extends Persona implements IVisualizable {
 
     }
 
-
+    @Override
+    public String toString() {
+        return super.toString() +
+                "cargo=" + cargo +
+                ", estado=" + estado +
+                ", fechaIngreso=" + fechaIngreso +
+                '}';
+    }
 
     @Override
     public void verCartelera() {

@@ -45,7 +45,7 @@ public abstract class Persona {
         this.nombre = nombre;
     }
 
-    public void setApeliido(String apellido) {
+    public void setApellido(String apellido) {
         this.apellido = apellido;
     }
 
@@ -61,5 +61,13 @@ public abstract class Persona {
         this.fechaNacimiento = fecha;
     }
 
-
+    @Override
+    public String toString() {
+        return "{" +
+                "nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", dni='" + dni + '\'' +
+                ", email='" + email + '\'' +
+                ", fechaNacimiento=" + fechaNacimiento;
+    }
 }

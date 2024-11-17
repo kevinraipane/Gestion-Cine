@@ -43,4 +43,13 @@ public class Direccion {
     public void setLocalidad(String localidad) {
         this.localidad = localidad;
     }
+
+    @Override
+    public String toString() {
+        return "Direccion{" +
+                "calle='" + calle + '\'' +
+                ", numero=" + numero +
+                ", localidad='" + localidad + '\'' +
+                '}';
+    }
 }
