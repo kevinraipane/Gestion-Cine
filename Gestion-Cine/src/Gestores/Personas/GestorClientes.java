@@ -139,10 +139,22 @@ public class GestorClientes {
         } else throw new DNIInexistenteException(dni);
     }
 
+    public void eliminarTarjetaACliente(String dni, TarjetaBanco tarjeta) throws DNIInexistenteException {
+        if (clientes.containsKey(dni)) {
+            clientes.get(dni).eliminarTarjeta(tarjeta);
+        } else throw new DNIInexistenteException(dni);
+    }
+
     // direccion
     public void agregarDireccionACliente(String dni, Direccion direccion) throws DNIInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).agregarDireccion(direccion);
+        } else throw new DNIInexistenteException(dni);
+    }
+
+    public void eliminarDireccionACliente(String dni, Direccion direccion) throws DNIInexistenteException {
+        if (clientes.containsKey(dni)) {
+            clientes.get(dni).eliminarDireccion(direccion);
         } else throw new DNIInexistenteException(dni);
     }
 
