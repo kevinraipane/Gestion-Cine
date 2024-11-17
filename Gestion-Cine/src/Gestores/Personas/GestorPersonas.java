@@ -11,7 +11,6 @@ public class GestorPersonas {
     GestorConsola gestorConsola = new GestorConsola();
     Scanner scanner = new Scanner(System.in);
 
-
     public String leerNombre() {
         String nombre = "";
         boolean valido = false;

@@ -8,6 +8,7 @@ import Modelos.Personas.Empleado;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class GestorEmpleados {
 
@@ -65,31 +66,89 @@ public class GestorEmpleados {
 
     /// LISTAR EMPLEADOS ------------------------------------------------------------------------------------
 
-    // por cargo
-    public List<Empleado> listarEmpleadosPorCargo(String cargo) {
-        List<Empleado> filtrados = new ArrayList<>();
-
-        // IMPLEMENTAR LOGICA
-
-        return filtrados;
+    public void listarEmpleados() {
+        for (Empleado empleado : empleados.values()) {
+            System.out.println(empleado.toString());
+        }
     }
 
-    // por estado
-    public List<Empleado> listarEmpleadosPorEstado(String estado) {
-        List<Empleado> filtrados = new ArrayList<>();
+    /// FILTRAR EMPLEADOS ------------------------------------------------------------------------------------
 
-        // IMPLEMENTAR LOGICA
-
-        return filtrados;
+    public void filtrarEmpleados(Predicate<Empleado> criterio) {
+        for (Empleado empleado : empleados.values()) {
+            if (criterio.test(empleado)) {
+                System.out.println(empleado.toString());
+            }
+        }
     }
 
+    /// MODIFICAR EMPLEADOS ----------------------------------------------------------------------------------
+
+    public Empleado modificarEmpleado(String dni) {
+        byte opcion = 0;
+        Empleado empleado = null;
+
+        try {
+            empleado = buscarEmpleadoPorDNI(dni);
+        } catch (DNIInexistenteException e) {
+            System.out.println(e.getMessage());
+        }
+
+        do {
+            System.out.print("Seleccione el dato que desea modificar:" +
+                    "[1] Nombre" +
+                    "[2] Apellido" +
+                    "[3] Fecha de Nacimiento" +
+                    "[4] Email" +
+                    "[5] Cargo" +
+                    "[6] Modificar todos los campos" +
+                    "[0] Salir");
+
+            opcion = scanner.nextByte();
+
+            if (opcion > 6 || opcion < 0) {
+                System.out.println("Opcion invalida, intente nuevamente");
+            }
+
+        } while (opcion > 6 || opcion < 0);
+
+        switch (opcion) {
+            case 1:
+                String nombre = gestorPersonas.leerNombre();
+                empleado.setNombre(nombre);
+                break;
+            case 2:
+                String apellido = gestorPersonas.leerApellido();
+                empleado.setApellido(apellido);
+                break;
+            case 3:
+                LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
+                empleado.setFechaNacimiento(fechaNacimiento);
+                break;
+            case 4:
+                String email = gestorPersonas.leerEmail();
+                empleado.setEmail(email);
+                break;
+            case 5:
+                System.out.println("Cargo del empleado");
+                CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                empleado.setCargo(cargo);
+                break;
+            case 6:
+                empleado = cargarNuevoEmpleado();
+                break;
+            case 0: // salir
+        }
+
+        return empleado;
+    }
 
     /// -----------------------------------------------------------------------------------------------
     /// VALIDACIONES
 
     private void dniExiste(String dni) throws DNIExistenteException {
 
-        if(!empleados.containsKey(dni)) {
+        if (!empleados.containsKey(dni)) {
             return;
         }
 

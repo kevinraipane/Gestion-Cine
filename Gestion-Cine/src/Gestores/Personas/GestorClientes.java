@@ -1,24 +1,25 @@
 package Gestores.Personas;
 
+import Enumeraciones.CargoEmpleado;
 import Excepciones.DNIExistenteException;
 import Excepciones.DNIInexistenteException;
 import Gestores.Funcionales.GestorConsola;
 import Modelos.Cine.Entrada;
 import Modelos.Personas.Cliente;
 import Modelos.Personas.Direccion;
+import Modelos.Personas.Empleado;
 import Modelos.Personas.TarjetaBanco;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class GestorClientes {
-    HashMap<String, Cliente> clientes;
     GestorPersonas gestorPersonas = new GestorPersonas();
     GestorConsola gestorConsola = new GestorConsola();
     Scanner scanner = new Scanner(System.in);
+
+    HashMap<String, Cliente> clientes;
 
     public GestorClientes() {
         clientes = new HashMap<>();
@@ -63,13 +64,70 @@ public class GestorClientes {
 
     /// LISTAR CLIENTES ------------------------------------------------------------------------------------
 
-    // por cantidad de compras
-    public List<Cliente> listarClientesPorEstado(int cantidad) {
-        List<Cliente> filtrados = new ArrayList<>();
+    public void listarClientes() {
+        for(Cliente cliente : clientes.values()) {
+            System.out.println(cliente.toString());
+        }
+    }
 
-        // IMPLEMENTAR LOGICA
+    /// FILTRAR CLIENTES ------------------------------------------------------------------------------------
 
-        return filtrados;
+    public void filtrarClientes(Predicate<Cliente> criterio) {
+        for (Cliente cliente : clientes.values()) {
+            if (criterio.test(cliente)) {
+                System.out.println(cliente.toString());
+            }
+        }
+    }
+
+    /// MODIFICAR CLIENTE --------------------------------------------------------------------------------
+    public Cliente modificarCliente(String dni) {
+        byte opcion = 0;
+        Cliente cliente = null;
+
+        try {
+            cliente = buscarClientePorDNI(dni);
+        } catch (DNIInexistenteException e) {
+            System.out.println(e.getMessage());
+        }
+
+        do {
+            System.out.print("Seleccione el dato que desea modificar:" +
+                    "[1] Nombre" +
+                    "[2] Apellido" +
+                    "[3] Fecha de Nacimiento" +
+                    "[4] Email" +
+                    "[5] Modificar todos los campos" +
+                    "[0] Salir");
+
+            opcion = scanner.nextByte();
+        } while (opcion > 6 || opcion < 0);
+
+        switch (opcion) {
+            case 1:
+                String nombre = gestorPersonas.leerNombre();
+                cliente.setNombre(nombre);
+                break;
+            case 2:
+                String apellido = gestorPersonas.leerApellido();
+                cliente.setApellido(apellido);
+                break;
+            case 3:
+                LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
+                cliente.setFechaNacimiento(fechaNacimiento);
+                break;
+            case 4:
+                String email = gestorPersonas.leerEmail();
+                cliente.setEmail(email);
+                break;
+            case 5:
+                cliente = cargarNuevoCliente();
+                break;
+            case 0: // salir
+
+        }
+
+        return cliente;
     }
 
     /// AGREGAR DATOS A CLIENTE -------------------------------------------------------------------------
@@ -85,13 +143,6 @@ public class GestorClientes {
     public void agregarDireccionACliente(String dni, Direccion direccion) throws DNIInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).agregarDireccion(direccion);
-        } else throw new DNIInexistenteException(dni);
-    }
-
-    // entrada
-    public void agregarEntradaACliente(String dni, Entrada entrada) throws DNIInexistenteException {
-        if (clientes.containsKey(dni)) {
-            clientes.get(dni).agregarEntrada(entrada);
         } else throw new DNIInexistenteException(dni);
     }
 
