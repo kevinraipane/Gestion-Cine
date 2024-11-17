@@ -1,23 +1,31 @@
 package Modelos.Personas;
 
+import Excepciones.PasswordNoValidaException;
+import Excepciones.UsernameNoValidoException;
+import Gestores.Funcionales.GestorConsola;
+import Gestores.Personas.GestorContraseña;
+
 import java.util.Objects;
 import java.util.Scanner;
 
 public class User {
+
+    GestorConsola gestorConsola = new GestorConsola();
+
     //Atributos
     private static int contadorID = 0;
-    private final int id_usuario;//Asi nunca puede ser modificado
+    private int idUsuario;//Asi nunca puede ser modificado
     private String username;
     private String password; //Revisar como encriptarla y usar hashcode
 
     //Constructor
     public User(String username, String password){
-        this.id_usuario = contadorID++;
+        this.idUsuario = contadorID++;
         this.username = username;
-        this.password = password;
+        this.password = GestorContraseña.encriptadorContraseña(password);
     }
 
-    //Getters y Setters (Faltan verificaciones)
+    //Getters y Setters
     public void setUsername(String username) {
         this.username = username;
     }
@@ -26,8 +34,8 @@ public class User {
         this.password = password;
     }
 
-    public int getId_usuario() {
-        return id_usuario;
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
     public String getUsername() {
@@ -47,6 +55,12 @@ public class User {
         return Objects.equals(username,user.username);
     }
 
+    //Metodo toString
+    @Override
+    public String toString(){
+        return "Username: " +username;
+    }
+
     //Metodo hashCode
     @Override
     public int hashCode(){
@@ -56,23 +70,55 @@ public class User {
     //Metodo para recibir un username, y verificarla
     public String capturarUsername(){
         Scanner scanner = new Scanner(System.in);
+        String username = null;
         boolean valido = false;
 
         while (!valido){
-            System.out.println("Ingrese su username: ");
-            String aux = scanner.nextLine();
+            System.out.println("Por favor, ingrese un nombre de usuario: ");
+            username = scanner.nextLine();
 
+            try {
+                valido = gestorConsola.isValidUsername(username);
+                if(valido){
+                    System.out.println("Nombre de usuario valido.");
+                }
+            }catch (UsernameNoValidoException e){
+                System.err.println("Error: " + e.getMessage());
+                System.out.println("Intentelo nuevamente.");
+            }
         }
 
-
-        return "";
+        return username;
     }
 
     //Metodo para recibir una contraña, y verificarla
     public String capturarPassword(){
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Ingrese la contraseña: ");
-        return scanner.nextLine();
+        String password = null;
+        boolean valido = false;
+
+        while (!valido){
+            System.out.println("Por favor, ingrese una contraseña: ");
+            password = scanner.nextLine();
+
+            try{
+                valido = gestorConsola.isValidPassword(password);
+                if(valido){
+                    System.out.println("Contraseña valida.");
+                }
+            }catch (PasswordNoValidaException e){
+                System.err.println("Error: " + e.getMessage());
+                System.out.println("Intentelo nuevamente.");
+            }
+        }
+
+        return password;
+    }
+
+    //Verificacion de Password
+    public boolean verificarPassword(String inputPassword) {
+        String hashInput = GestorContraseña.encriptadorContraseña(inputPassword);
+        return this.password.equals(hashInput); // Compara el hash de la contraseña
     }
 
 }

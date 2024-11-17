@@ -2,7 +2,6 @@ package Gestores.Personas;
 
 import Excepciones.UserNoEncontradoException;
 import Excepciones.UsuarioYaExisteException;
-import Interfaces.ICRUD;
 import Modelos.Personas.User;
 
 import com.google.gson.Gson;
@@ -15,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-/* public class GestorUser implements ICRUD<User> {
+public class GestorUser {
     private Set<User> usuarios;
     private static final String FILE_PATH = "usuarios.json";
 
@@ -26,7 +25,6 @@ import java.util.Set;
 
 
     //Agregar un nuevo user
-    @Override
     public void create(User user)
         throws UsuarioYaExisteException {
         if(usuarios.add(user)){
@@ -37,29 +35,69 @@ import java.util.Set;
         }
     }
 
-    @Override
-    public void update(int idUsuario)
-        throws UserNoEncontradoException{
-        User usuario = buscarPorId(idUsuario);
-        if(usuario != null){
+    //Actualizar un usuario
+    public void update(User user)
+            throws UserNoEncontradoException{
+        User usuarioExistente = buscarPorId(user.getIdUsuario());
 
+        if(usuarioExistente != null){
+            usuarioExistente.setUsername(user.getUsername());
+            usuarioExistente.setPassword(user.getPassword());
+            System.out.println("Usuario modificado con exito.");
+        }else{
+            throw new UserNoEncontradoException("Usuario no encontrado.");
         }
     }
 
-    //Buscar un usuario
-    @Override
+    //Buscar un usuario por id
     public User buscarPorId(int idUsuario)
         throws UserNoEncontradoException{
         for(User u : usuarios){
-            if(u.getId_usuario() == idUsuario){
+            if(u.getIdUsuario() == idUsuario){
                 return u;
             }
         }
-        throw new UserNoEncontradoException("El usuario no existe en el sistema.");
+        throw new UserNoEncontradoException("El usuario con ID: " +idUsuario+ " no existe en el sistema.");
     }
 
-    //Eliminar usuario
+    //Buscar usuario por username
+    public User buscarPorUsername(String username)
+            throws UserNoEncontradoException{
+        for (User u : usuarios){
+            if(u.getUsername().equals(username)){
+                return u;
+            }
+        }
+        throw new UserNoEncontradoException("El usuario " +username+ " no existe en el sistema.");
+    }
 
+    //Eliminar usuario por username
+    public void eliminarUsuario(String username)
+            throws UserNoEncontradoException{
+        User usuarioAEliminar = buscarPorUsername(username);
+        if(usuarios.remove(usuarioAEliminar)){
+            guardarUsuarios(); //Guardo los cambios despues de la eliminacion.
+            System.out.println("Usuario eliminado: " +username);
+        }else{
+            throw new UserNoEncontradoException("El usuario " +username+ " no pudo eliminar porque no existe.");
+        }
+    }
+
+    //Metodo para verificar si la contraseña ingresada es correcta
+    public boolean validarPassword(String username,String inputPassword){
+        User user = buscarPorUsername(username);
+        return user.verificarPassword(inputPassword);
+    }
+
+    //Metodo para iniciar sesion
+    public boolean iniciarSesion(String username,String password){
+        for (User u : usuarios){
+            if(u.getUsername().equals(username) && u.verificarPassword(password)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     //Cargar usuarios desde el archivo JSON
     private void cargarUsuarios(){
@@ -75,27 +113,27 @@ import java.util.Set;
             System.out.println("No se puedo cargar el archivo JSON: " +e.getMessage());
         }
     }
-    /**
-     * Type setType = new TypeToken<HashSet<Usuario>>() {}.getType();
-     * TypeToken<HashSet<Usuario>>: TypeToken es una clase de Gson que nos ayuda a especificar tipos complejos en tiempo
-     * de ejecución, como HashSet<Usuario>.
-     * new TypeToken<HashSet<Usuario>>() {}: Se crea una instancia anónima de TypeToken<HashSet<Usuario>>. Gson necesita
-     * esta instancia para entender el tipo exacto con el que debe trabajar, ya que Java pierde la información de tipo
-     * genérico en tiempo de ejecución (debido a type erasure o eliminación de tipos). En otras palabras, Java no sabe
-     * que estamos trabajando con HashSet<Usuario> en lugar de simplemente HashSet.
-     * .getType(): Este método devuelve un objeto Type que representa el tipo HashSet<Usuario>. Gson usa este Type para
-     * deserializar correctamente el JSON en un HashSet<Usuario>.
-     */
 
-/*
+
     //Guardar usuarios en un archivo JSON
     private void guardarUsuarios(){
         Gson gson = new Gson();
         try (FileWriter writer = new FileWriter(FILE_PATH)){
             gson.toJson(this.usuarios,writer);
         }catch (IOException e){
-            System.out.println("No se pudo cargar el archivo JSON: " +e.getMessage());
+            System.out.println("No se pudo guardar el archivo JSON: " +e.getMessage());
         }
     }
 }
+
+/**
+ * Type setType = new TypeToken<HashSet<Usuario>>() {}.getType();
+ * TypeToken<HashSet<Usuario>>: TypeToken es una clase de Gson que nos ayuda a especificar tipos complejos en tiempo
+ * de ejecución, como HashSet<Usuario>.
+ * new TypeToken<HashSet<Usuario>>() {}: Se crea una instancia anónima de TypeToken<HashSet<Usuario>>. Gson necesita
+ * esta instancia para entender el tipo exacto con el que debe trabajar, ya que Java pierde la información de tipo
+ * genérico en tiempo de ejecución (debido a type erasure o eliminación de tipos). En otras palabras, Java no sabe
+ * que estamos trabajando con HashSet<Usuario> en lugar de simplemente HashSet.
+ * .getType(): Este método devuelve un objeto Type que representa el tipo HashSet<Usuario>. Gson usa este Type para
+ * deserializar correctamente el JSON en un HashSet<Usuario>.
  */
