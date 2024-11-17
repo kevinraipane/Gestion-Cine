@@ -10,8 +10,10 @@ public class Main {
 
         GestorPelicula peliculas = new GestorPelicula();
         peliculas.inicializarLista();
-
-               new Pelicula("pepe").buscar(new Scanner(System.in));
+        peliculas.buscar(new Scanner(System.in));
+///FALTA HACER EL BUCLE EN EL MENU DE GESTORPELICULA
+        //Pelicula peliculaNueva = new Pelicula((Pelicula) null);
+        //Pelicula peliculaModificada = new Pelicula(peliculas.);
 
 
         /*Pelicula aux = new Pelicula("default");

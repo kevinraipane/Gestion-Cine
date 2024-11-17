@@ -47,22 +47,36 @@ public class Pelicula{
     }
 
     //------------------------------------------Constructor que no recibe parametros-------------------------------------
-    public Pelicula(){
+    public Pelicula(Pelicula peliculaExistente){
         Scanner entrada = new Scanner(System.in);
         int datosValidos = 0;
-        this.id = ++contador;
+
+        if (peliculaExistente != null) {
+            this.id = peliculaExistente.id; // O conservar el incremento para un nuevo ID
+        } else {
+            this.id = ++contador;
+        }
 
         while(datosValidos==0){ //Ingresar el titulo
             try{
-                ingresarTitulo(entrada);
+                System.out.println("Título actual: " + (peliculaExistente != null ? peliculaExistente.titulo : "Ninguno"));
+                if (peliculaExistente != null && peliculaExistente.titulo != null){
+                    System.out.println("Desea modificar el titulo?");
+                    if (confirmacion(entrada)){
+                        setTitulo(ingresarTitulo(entrada));
+                    }
+                }else{
+                    setTitulo(ingresarTitulo(entrada));
+                }
                 datosValidos++;
             }catch (StringEnBlancoException e){
                 System.out.println(e.getMessage());
             }
         }
-
+/*
         while(datosValidos==1){ //Seleccionar el idioma
             try{
+                System.out.println("Idioma actual: " + (peliculaExistente != null ? peliculaExistente.idioma : "Ninguno"));
                 System.out.println("Seleccione el idioma de la pelicula: ");
                 this.setIdioma(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
                 datosValidos++;
@@ -76,6 +90,7 @@ public class Pelicula{
 
         while(datosValidos==2){ //Seleccionar el idioma de los subtitulos
             try{
+                System.out.println("Título actual: " + (peliculaExistente != null ? peliculaExistente.titulo : "Ninguno"));
                 System.out.println("\nSeleccione el idioma de los subtitulos: ");
                 this.setIdiomaSubtitulos(seleccionarIdioma(entrada));
                 datosValidos++;
@@ -184,7 +199,7 @@ public class Pelicula{
                 entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
             }
         }
-
+*/
         System.out.println("Estos son los datos ingresados" + this);
 
     }
@@ -216,20 +231,9 @@ public class Pelicula{
         }else{
             return aux;
         }
-
-
-        /*
-        while(datosValidos==0){ //Ingresar el titulo
-            try{
-                this.setTitulo(ingresarTitulo(entrada));
-                datosValidos++;
-            }catch (StringEnBlancoException e){
-                System.out.println(e.getMessage());
-            }
-        }
-
-         */
     }
+
+
 
     public Idioma seleccionarIdioma(Scanner entrada) throws NumeroFueraDelRangoException, SoloNumerosException {
         new GestorEnums<>(Idioma.class).listarEnum();
@@ -300,7 +304,8 @@ public class Pelicula{
     }
 
     public boolean confirmacion(Scanner entrada) throws StringEnBlancoException, SeleccionInvalidaException{
-        System.out.println("Desea continuar modificando? S/N");
+        //Como se puede usar en varios contextos, el mensaje se debe printear antes
+        System.out.println(" (S/N)");
         String respuesta = entrada.nextLine();
         if (respuesta.equalsIgnoreCase("S")){
             return true;
@@ -312,7 +317,7 @@ public class Pelicula{
             throw new SeleccionInvalidaException();
         }
     }
-
+/*
     public void crearModificarPelicula(Scanner entrada){
         int opcion = 0;
         boolean salirBucle = true;
@@ -479,7 +484,7 @@ public class Pelicula{
 
         return modificar;
     }
-
+*/
     //-----------------------------------------------------Metodos que printean-----------------------------------------
     @Override
     public String toString() {
