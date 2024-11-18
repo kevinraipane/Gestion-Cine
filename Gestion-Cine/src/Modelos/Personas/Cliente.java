@@ -1,5 +1,6 @@
 package Modelos.Personas;
 
+import Excepciones.CodSeguridadInvalidoException;
 import Interfaces.IVisualizable;
 //import Modelos.Cine.Entrada;
 
@@ -37,6 +38,20 @@ public class Cliente extends Persona implements IVisualizable {
 
     public void eliminarDireccion(Direccion direccion) {
         this.direcciones.remove(direccion);
+    }
+
+    public TarjetaBanco usarTarjeta(String ultimosCuatro, int codSeguridad) throws CodSeguridadInvalidoException {
+        for (TarjetaBanco tarjeta : tarjetasRegistradas) {
+            if (tarjeta.getNumeros().substring(14).equals(ultimosCuatro)) {
+                if (tarjeta.getCodSeguridad() == codSeguridad) {
+                    return tarjeta;
+                } else {
+                    throw new CodSeguridadInvalidoException(codSeguridad);
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
