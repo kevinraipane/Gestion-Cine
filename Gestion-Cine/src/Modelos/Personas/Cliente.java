@@ -1,7 +1,7 @@
 package Modelos.Personas;
 
 import Interfaces.IVisualizable;
-import Modelos.Cine.Entrada;
+//import Modelos.Cine.Entrada;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,8 +11,8 @@ public class Cliente extends Persona implements IVisualizable {
     private ArrayList<TarjetaBanco> tarjetasRegistradas;
     private ArrayList<Direccion> direcciones;
 
-    public Cliente(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento) {
-        super(nombre, apellido, dni, email, fechaNacimiento);
+    public Cliente(int idUsuario, String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento) {
+        super(idUsuario,nombre, apellido, dni, email, fechaNacimiento);
     }
 
     public ArrayList<TarjetaBanco> getTarjetasRegistradas() {

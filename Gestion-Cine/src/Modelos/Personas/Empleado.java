@@ -10,8 +10,6 @@ public class Empleado extends Persona implements IVisualizable {
 
     /// ATRIBUTOS
 
-    private int idEmpleado;
-    private static int contadorId = 0;
     private CargoEmpleado cargo;
     private EstadoEmpleado estado;
     private LocalDate fechaIngreso;
@@ -21,9 +19,8 @@ public class Empleado extends Persona implements IVisualizable {
 
     /// CONSTRUCTOR
 
-    public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento, CargoEmpleado cargo){
-        super(nombre, apellido, dni, email, fechaNacimiento);
-        this.idEmpleado = contadorId++;
+    public Empleado(int idUsuario,String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento, CargoEmpleado cargo){
+        super(idUsuario,nombre, apellido, dni, email, fechaNacimiento);
         this.cargo = cargo;
         this.estado = EstadoEmpleado.A_PRUEBA;
         this.fechaIngreso = LocalDate.now();
@@ -61,7 +58,7 @@ public class Empleado extends Persona implements IVisualizable {
     public String toString() {
         return super.toString() +
                 "cargo=" + cargo +
-                ", estado=" + estado +
+                ", estado empleado=" + estado +
                 ", fechaIngreso=" + fechaIngreso +
                 '}';
     }

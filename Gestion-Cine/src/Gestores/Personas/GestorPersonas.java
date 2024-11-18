@@ -2,14 +2,40 @@ package Gestores.Personas;
 
 import Excepciones.EmailInvalidoException;
 import Gestores.Funcionales.GestorConsola;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.sun.security.auth.UnixNumericGroupPrincipal;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class GestorPersonas {
+    private static final String FILE_PATH = "usuarios.json";//Archivo desde donde leo el ultimo id
 
     GestorConsola gestorConsola = new GestorConsola();
     Scanner scanner = new Scanner(System.in);
+    private int lastId = 0;
+
+    public int recibirIdUsuario() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader(FILE_PATH)) {
+            JsonObject data = gson.fromJson(reader, JsonObject.class);
+
+            if (data != null) {
+                //Leo el ultimo id del json de usuarios
+                if (data.has("lastId")) {
+                    this.lastId = data.get("lastId").getAsInt();
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No se puedo cargar el archivo JSON: " + e.getMessage());
+        }
+        return lastId;
+    }
 
     public String leerNombre() {
         String nombre = "";

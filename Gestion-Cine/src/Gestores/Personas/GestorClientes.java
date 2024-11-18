@@ -1,13 +1,11 @@
 package Gestores.Personas;
 
-import Enumeraciones.CargoEmpleado;
-import Excepciones.DNIExistenteException;
-import Excepciones.DNIInexistenteException;
+import Excepciones.DniExistenteException;
+import Excepciones.DniInexistenteException;
 import Gestores.Funcionales.GestorConsola;
-import Modelos.Cine.Entrada;
+//import Modelos.Cine.Entrada;
 import Modelos.Personas.Cliente;
 import Modelos.Personas.Direccion;
-import Modelos.Personas.Empleado;
 import Modelos.Personas.TarjetaBanco;
 
 import java.time.LocalDate;
@@ -26,14 +24,14 @@ public class GestorClientes {
     }
 
     public Cliente cargarNuevoCliente() {
+        int idUsuario = gestorPersonas.recibirIdUsuario();
         String dni = leerDniCliente();
-
         String nombre = gestorPersonas.leerNombre();
         String apellido = gestorPersonas.leerApellido();
         String email = gestorPersonas.leerEmail();
         LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
 
-        return new Cliente(nombre, apellido, dni, email, fechaNacimiento);
+        return new Cliente(idUsuario,nombre, apellido, dni, email, fechaNacimiento);
     }
 
     /// AGREGAR CLIENTE A LA LISTA -----------------------------------------------------------------------------------
@@ -44,21 +42,21 @@ public class GestorClientes {
 
     /// ELIMINAR CLIENTE ---------------------------------------------------------------------------------------------
 
-    public void eliminarCliente(String dni) throws DNIInexistenteException {
+    public void eliminarCliente(String dni) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.remove(dni);
         } else {
-            throw new DNIInexistenteException(dni);
+            throw new DniInexistenteException(dni);
         }
     }
 
     /// BUSCAR CLIENTE ---------------------------------------------------------------------------------------
 
-    public Cliente buscarClientePorDNI(String dni) throws DNIInexistenteException {
+    public Cliente buscarClientePorDNI(String dni) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             return clientes.get(dni);
         } else {
-            throw new DNIInexistenteException(dni);
+            throw new DniInexistenteException(dni);
         }
     }
 
@@ -87,7 +85,7 @@ public class GestorClientes {
 
         try {
             cliente = buscarClientePorDNI(dni);
-        } catch (DNIInexistenteException e) {
+        } catch (DniInexistenteException e) {
             System.out.println(e.getMessage());
         }
 
@@ -133,42 +131,41 @@ public class GestorClientes {
     /// AGREGAR DATOS A CLIENTE -------------------------------------------------------------------------
 
     // tarjeta
-    public void agregarTarjetaACliente(String dni, TarjetaBanco tarjeta) throws DNIInexistenteException {
+    public void agregarTarjetaACliente(String dni, TarjetaBanco tarjeta) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).agregarTarjeta(tarjeta);
-        } else throw new DNIInexistenteException(dni);
+        } else throw new DniInexistenteException(dni);
     }
 
-    public void eliminarTarjetaACliente(String dni, TarjetaBanco tarjeta) throws DNIInexistenteException {
+    public void eliminarTarjetaACliente(String dni, TarjetaBanco tarjeta) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).eliminarTarjeta(tarjeta);
-        } else throw new DNIInexistenteException(dni);
+        } else throw new DniInexistenteException(dni);
     }
 
     // direccion
-    public void agregarDireccionACliente(String dni, Direccion direccion) throws DNIInexistenteException {
+    public void agregarDireccionACliente(String dni, Direccion direccion) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).agregarDireccion(direccion);
-        } else throw new DNIInexistenteException(dni);
+        } else throw new DniInexistenteException(dni);
     }
 
-    public void eliminarDireccionACliente(String dni, Direccion direccion) throws DNIInexistenteException {
+    public void eliminarDireccionACliente(String dni, Direccion direccion) throws DniInexistenteException {
         if (clientes.containsKey(dni)) {
             clientes.get(dni).eliminarDireccion(direccion);
-        } else throw new DNIInexistenteException(dni);
+        } else throw new DniInexistenteException(dni);
     }
-
 
     /// -----------------------------------------------------------------------------------------------
     /// VALIDACIONES
 
-    private boolean dniExiste(String dni) throws DNIExistenteException {
+    private boolean dniExiste(String dni) throws DniExistenteException {
 
         if (!clientes.containsKey(dni)) {
             return true;
         }
 
-        throw new DNIExistenteException(dni);
+        throw new DniExistenteException(dni);
     }
 
     public String leerDniCliente() {
@@ -195,7 +192,7 @@ public class GestorClientes {
             try {
                 dniExiste(dni);
                 valido = true;
-            } catch (DNIExistenteException e) {
+            } catch (DniExistenteException e) {
                 System.out.println(e.getMessage());
             }
 

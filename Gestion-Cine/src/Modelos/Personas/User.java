@@ -1,5 +1,6 @@
 package Modelos.Personas;
 
+import Enumeraciones.EstadoUsuario;
 import Excepciones.PasswordNoValidaException;
 import Excepciones.UsernameNoValidoException;
 import Gestores.Funcionales.GestorConsola;
@@ -13,16 +14,17 @@ public class User {
     GestorConsola gestorConsola = new GestorConsola();
 
     //Atributos
-    private static int contadorID = 0;
-    private int idUsuario;//Asi nunca puede ser modificado
+    private int idUsuario;
     private String username;
-    private String password; //Revisar como encriptarla y usar hashcode
+    private String password;
+    private EstadoUsuario estadoUsuario;
 
     //Constructor
-    public User(String username, String password){
-        this.idUsuario = contadorID++;
+    public User(int idUsuario,String username, String password){
+        this.idUsuario = idUsuario;
         this.username = username;
         this.password = GestorContraseña.encriptadorContraseña(password);
+        this.estadoUsuario = EstadoUsuario.ALTA;
     }
 
     //Getters y Setters
@@ -32,6 +34,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setEstadoUsuario(EstadoUsuario estadoUsuario) {
+        this.estadoUsuario = estadoUsuario;
     }
 
     public int getIdUsuario() {
@@ -46,6 +52,10 @@ public class User {
         return password;
     }
 
+    public EstadoUsuario getEstadoUsuario() {
+        return estadoUsuario;
+    }
+
     //Metodo equals, comparo solo los username
     @Override
     public boolean equals(Object object){
@@ -55,11 +65,16 @@ public class User {
         return Objects.equals(username,user.username);
     }
 
-    //Metodo toString
+    // Metodo to String
     @Override
-    public String toString(){
-        return "Username: " +username;
+    public String toString() {
+        return "{" +
+                "Username: '" + username + '\'' +
+                ", ID: '" + idUsuario + '\'' +
+                ", Estado del usuario: '" + estadoUsuario + '\'' +
+                '}';
     }
+
 
     //Metodo hashCode
     @Override

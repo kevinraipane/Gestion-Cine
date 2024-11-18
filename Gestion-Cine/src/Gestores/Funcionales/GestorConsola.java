@@ -2,6 +2,8 @@ package Gestores.Funcionales;
 
 import Excepciones.DominioInvalidoException;
 import Excepciones.EmailInvalidoException;
+import Excepciones.PasswordNoValidaException;
+import Excepciones.UsernameNoValidoException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -87,6 +89,39 @@ public class GestorConsola {
         } else {
             throw new EmailInvalidoException(email);
         }
+    }
+
+    public boolean isValidUsername(String username){
+        if(estaVacio(username)){
+            throw new UsernameNoValidoException("El nombre de usuario no puede estar vacio.");
+        }
+
+        if(!esLargoValido(username,3,20)){
+            throw new UsernameNoValidoException("El nombre de usuario debe contener entre 3 y 20 caracteres.");
+        }
+
+        if(contieneCaracteresNoValidos(username)){
+            throw new UsernameNoValidoException("El nombre de usuario contiene caracteres no validos.");
+            //Podriamos mostrar los caracteres validos???a
+        }
+
+        return true;
+    }
+
+    public boolean isValidPassword(String password){
+        if(estaVacio(password)){
+            throw new PasswordNoValidaException("La contraseña no puede estar vacia.");
+        }
+
+        if(!esLargoValido(password,8,20)){
+            throw new PasswordNoValidaException("La contraseña debe contener entre 8 y 20 caracteres.");
+        }
+
+        if(contieneCaracteresNoValidos(password)){
+            throw new PasswordNoValidaException("La contraseña contiene caracteres no validos.");
+        }
+
+        return true;
     }
 
     // --------------------------------------------------------------------------------------------------

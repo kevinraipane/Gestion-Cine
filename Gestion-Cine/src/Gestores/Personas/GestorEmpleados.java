@@ -1,8 +1,9 @@
 package Gestores.Personas;
 
 import Enumeraciones.CargoEmpleado;
-import Excepciones.DNIExistenteException;
-import Excepciones.DNIInexistenteException;
+import Enumeraciones.EstadoUsuario;
+import Excepciones.DniExistenteException;
+import Excepciones.DniInexistenteException;
 import Gestores.Funcionales.GestorConsola;
 import Modelos.Personas.Empleado;
 
@@ -25,8 +26,8 @@ public class GestorEmpleados {
     /// AGREGAR EMPLEADO MANUALMENTE ----------------------------------------------------------------------------------
 
     public Empleado cargarNuevoEmpleado() {
+        int idUsuario = gestorPersonas.recibirIdUsuario();
         String dni = leerDniEmpleado();
-
         String nombre = gestorPersonas.leerNombre();
         String apellido = gestorPersonas.leerApellido();
         String email = gestorPersonas.leerEmail();
@@ -35,7 +36,7 @@ public class GestorEmpleados {
         System.out.println("Cargo del empleado");
         CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
 
-        return new Empleado(nombre, apellido, dni, email, fechaNacimiento, cargo);
+        return new Empleado(idUsuario,nombre, apellido, dni, email, fechaNacimiento, cargo);
     }
 
     /// AGREGAR EMPLEADO A LA LISTA -----------------------------------------------------------------------------------
@@ -46,21 +47,22 @@ public class GestorEmpleados {
 
     /// ELIMINAR EMPLEADO ---------------------------------------------------------------------------------------------
 
-    public void eliminarEmpleado(String dni) throws DNIInexistenteException {
+    public void eliminarEmpleado(String dni) throws DniInexistenteException {
         if (empleados.containsKey(dni)) {
-            empleados.remove(dni);
+            Empleado empleadoAux = buscarEmpleadoPorDNI(dni);
+            empleadoAux.setEstadoUsuario(EstadoUsuario.BAJA);
         } else {
-            throw new DNIInexistenteException(dni);
+            throw new DniInexistenteException(dni);
         }
     }
 
     /// BUSCAR EMPLEADO ---------------------------------------------------------------------------------------
 
-    public Empleado buscarEmpleadoPorDNI(String dni) throws DNIInexistenteException {
+    public Empleado buscarEmpleadoPorDNI(String dni) throws DniInexistenteException {
         if (empleados.containsKey(dni)) {
             return empleados.get(dni);
         } else {
-            throw new DNIInexistenteException(dni);
+            throw new DniInexistenteException(dni);
         }
     }
 
@@ -90,7 +92,7 @@ public class GestorEmpleados {
 
         try {
             empleado = buscarEmpleadoPorDNI(dni);
-        } catch (DNIInexistenteException e) {
+        } catch (DniInexistenteException e) {
             System.out.println(e.getMessage());
         }
 
@@ -146,13 +148,13 @@ public class GestorEmpleados {
     /// -----------------------------------------------------------------------------------------------
     /// VALIDACIONES
 
-    private void dniExiste(String dni) throws DNIExistenteException {
+    private void dniExiste(String dni) throws DniExistenteException {
 
         if (!empleados.containsKey(dni)) {
             return;
         }
 
-        throw new DNIExistenteException(dni);
+        throw new DniExistenteException(dni);
     }
 
     public String leerDniEmpleado() {
@@ -179,7 +181,7 @@ public class GestorEmpleados {
             try {
                 dniExiste(dni);
                 valido = true;
-            } catch (DNIExistenteException e) {
+            } catch (DniExistenteException e) {
                 System.out.println(e.getMessage());
             }
 

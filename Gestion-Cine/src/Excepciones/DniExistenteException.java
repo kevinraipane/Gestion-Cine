@@ -1,14 +1,14 @@
 package Excepciones;
 
-public class DNIExistenteException extends Exception {
+public class DniExistenteException extends Exception {
     String dni;
 
-    public DNIExistenteException(String dni) {
+    public DniExistenteException(String dni) {
         super("El DNI ingresado ya se encuentra en la base de datos.");
         this.dni = dni;
     }
 
-    public DNIExistenteException(String dni, String message) {
+    public DniExistenteException(String dni, String message) {
         super(message);
         this.dni = dni;
     }
