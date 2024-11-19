@@ -1,6 +1,8 @@
-package Excepciones;
+package Excepciones.KevPF98.Flexibles;
 
 public class ElementoNoEncontradoException extends Exception{
+
+    /// No hubo coincidencias en la colección.
 
     //Constructor:
 

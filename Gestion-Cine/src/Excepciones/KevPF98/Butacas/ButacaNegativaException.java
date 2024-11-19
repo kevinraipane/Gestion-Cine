@@ -1,6 +1,6 @@
-package Excepciones;
+package Excepciones.KevPF98.Butacas;
 
-public class ButacaNegativaException extends ButacaInexistenteException{
+public class ButacaNegativaException extends ButacaInexistenteException {
 
     public ButacaNegativaException(){
         super("El número de butaca no puede ser negativo.");

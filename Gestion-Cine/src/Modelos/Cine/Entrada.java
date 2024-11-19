@@ -2,8 +2,6 @@ package Modelos.Cine;
 
 import Enumeraciones.EstadoFuncion;
 import Enumeraciones.TipoTicket;
-import Excepciones.ButacaEnEstadoActualException;
-import Excepciones.ButacaInexistenteException;
 //import Modelos.General.BaseEntity;
 
 import java.util.Objects;
@@ -17,29 +15,39 @@ public class Entrada /*extends BaseEntity<Integer>*/ {
     private Funcion funcion;
     private TipoTicket tipoTicket;
     private EstadoFuncion estadoFuncion;
+    //private Butaca butaca;
 
     //Constructor:
 
-    public Entrada(Funcion funcion, TipoTicket tipoTicket, EstadoFuncion estadoFuncion) {
+    public Entrada(Funcion funcion, TipoTicket tipoTicket, EstadoFuncion estadoFuncion/*, int numeroDeButaca, String dni*/) /*throws ProhibidoEstadoActualException, ButacaInexistenteException*/ {
         this.idBoleta = ++contador;
         //super(++contador);
         this.funcion = funcion;
         this.tipoTicket = tipoTicket;
         this.estadoFuncion = estadoFuncion;
+        //reservarButaca(numeroDeButaca, dni);
+        //Butaca = ¿llamar metodo reservar?
     }
 
     //Métodos:
 
-    public void reservarButaca(int numero, String cliente) throws ButacaInexistenteException, ButacaEnEstadoActualException { //delegamos
+    //Dudoso que reserve y cancele llamando métodos puntuales.
+    //¿Esto no debería hacerse automaticamente cuando eliminamos y agregamos una entrada (o sea desde
+    //constructor)? Para minimizar errores.
+
+
+    /*
+    public void reservarButaca(int numero, String cliente) throws ButacaInexistenteException, ProhibidoEstadoActualException, ButacaInhabilitadaException { //delegamos
         funcion.getSala().getTotalButacas().reservarButaca(numero, cliente);
         //manejaremos la excepción en menu.
     }
 
 
-    public void liberarButaca(int numero) throws ButacaInexistenteException, ButacaEnEstadoActualException { //delegamos
+    public void liberarButaca(int numero) throws ButacaInexistenteException, ProhibidoEstadoActualException { //delegamos
         funcion.getSala().getTotalButacas().liberarButaca(numero);
         //manejaremos la excepción en menu.
     }
+     */
 
     //Getters y setters:
 
@@ -94,10 +102,10 @@ public class Entrada /*extends BaseEntity<Integer>*/ {
     @Override
     public String toString() {
         return  "\n-----------------\n" +
-                "Id de la boleta: " + /*idBoleta*/ getIdBoleta() + ".\n" +
+                "Id de la boleta: " + idBoleta /*getIdBoleta()*/ + ".\n" +
                 "Función: " + funcion + ".\n" +
                 "Tipo de entrada: " + tipoTicket + ".\n" +
-                "Estado de la función: " + estadoFuncion +
+                "Estado de la función: " + estadoFuncion + ".\n" +
                 ".\n" +
                 "\n-----------------\n";
     }

@@ -3,48 +3,127 @@ package Modelos.Cine;
 import Enumeraciones.EstadoSala;
 import Enumeraciones.TipoSala;
 
+import java.util.Objects;
+
 public class Sala {
-    //Atributos
-    private String numeroSala;
-    private int totalButacas;
+
+    //Atributos:
+
+    private int idSala;
+    public static int contador = 0;
+    private int numeroSala;
     private EstadoSala estado;
     private TipoSala tipo;
+    private int totalButacas;
+    //private GestorButacas butacasDisponibles; //Solamente informa la cantidad de butacas (ya no)
+    //por ser una propiedad de sala.
 
-    //Constructor
-    public Sala(String numeroSala,int totalButacas,TipoSala tipo){
+    //Constructor:
+
+    public Sala(/*int idSala,*/ int numeroSala, TipoSala tipo, int totalButacas) /*throws ColeccionInvalidaException, ElementoEnColeccionException*/ {
+        this.idSala = ++contador;//idSala;
         this.numeroSala = numeroSala;
-        this.totalButacas = totalButacas;
-        this.estado = EstadoSala.DISPONIBLE;
+        this.estado = EstadoSala.DISPONIBLE; // ¿O reservada? Depende cómo y dónde la instanciamos.
         this.tipo = tipo;
+        this.totalButacas = totalButacas;
+        //this.butacasDisponibles = new GestorButacas(totalButacas);
     }
 
-    //Getters y Setters
-    public String getNumeroSala() {
+    //Métodos:
+
+    //Ver sus butacas disponibles y reservadas:
+
+    /*public void verButacas(){
+        butacasDisponibles.imprimirButacas();
+    }*/
+
+    //Getters y Setters:
+
+    public int getIdSala(){
+        return idSala;
+    }
+
+    public int getNumeroSala() {
         return numeroSala;
     }
 
-    public int getTotalButacas() {
-        return totalButacas;
+    public void setNumeroSala(int numeroSala) {
+        this.numeroSala = numeroSala;
     }
 
     public EstadoSala getEstado() {
         return estado;
     }
 
+    public void setEstado(EstadoSala estado) {
+        this.estado = estado;
+    }
+
     public TipoSala getTipo() {
         return tipo;
-    }
-
-    public void setNumeroSala(String numeroSala) {
-        this.numeroSala = numeroSala;
-    }
-
-    public void setTotalButacas(int totalButacas) {
-        this.totalButacas = totalButacas;
     }
 
     public void setTipo(TipoSala tipo) {
         this.tipo = tipo;
     }
 
+    public int getTotalButacas(){
+        return totalButacas;
+    }
+
+    public void setTotalButacas(int totalButacas){
+        this.totalButacas = totalButacas;
+    }
+
+    /*public void setTotalButacas(int totalButacas) throws ColeccionInvalidaException, ElementoEnColeccionException {
+        this.totalButacas = totalButacas;
+        this.butacasDisponibles = new GestorButacas(totalButacas);
+    }*/
+
+    /*public GestorButacas getTotalButacas() {
+        return butacasDisponibles;
+    }*/
+
+    //Equals y HashCode:
+
+    /*
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Sala sala = (Sala) object;
+        return Objects.equals(numeroSala, sala.numeroSala);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(numeroSala);
+    }*/
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Sala sala = (Sala) object;
+        return idSala == sala.idSala && totalButacas == sala.totalButacas && Objects.equals(numeroSala, sala.numeroSala);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idSala, numeroSala, totalButacas);
+    }
+
+    //toString:
+
+    @Override
+    public String toString() {
+        return "\n-----------------\n" +
+                "Id de la sala: " + idSala + ".\n" +
+                "Numero de sala: " + numeroSala + ".\n" +
+                "Estado actual de la sala: " + estado + ".\n" +
+                "Tipo de sala: " + tipo + ".\n" +
+                "Capacidad máxima de personas: " + totalButacas +
+                ".\n" +
+                "\n-----------------\n";
+    }
 }
