@@ -8,26 +8,19 @@ import java.time.LocalDate;
 
 public class Empleado extends Persona implements IVisualizable {
 
-    /// ATRIBUTOS
-
+    //Atributos
+    private int idEmpleado;
+    private static int contadorId = 0;
     private CargoEmpleado cargo;
     private EstadoEmpleado estado;
-    private LocalDate fechaIngreso;
 
-    final static int mesesDePrueba = 6;
-
-
-    /// CONSTRUCTOR
-
-    public Empleado(int idUsuario,String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento, CargoEmpleado cargo){
-        super(idUsuario,nombre, apellido, dni, email, fechaNacimiento);
+    public Empleado(String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento,CargoEmpleado cargo){
+        super(nombre, apellido, dni, email, fechaNacimiento);
+        this.idEmpleado = contadorId++;
         this.cargo = cargo;
-        this.estado = EstadoEmpleado.A_PRUEBA;
-        this.fechaIngreso = LocalDate.now();
     }
 
-    ///GETTERS Y SETTERS
-
+    //Getters y Setters
     public CargoEmpleado getCargo() {
         return cargo;
     }
@@ -40,39 +33,13 @@ public class Empleado extends Persona implements IVisualizable {
 
     public void setEstado(EstadoEmpleado estado) { this.estado = estado; }
 
-
-    /// METODOS
+    // METODOS
 
     public boolean estaActivo() {
-        return (estado.equals(EstadoEmpleado.ALTA) || (estado.equals(EstadoEmpleado.A_PRUEBA)));
+        return estado.equals(EstadoEmpleado.ALTA);
     }
 
-    public boolean dadoDeBaja() {
-        return estado.equals(EstadoEmpleado.BAJA);
-    }
 
-    public void aPlantaPermanente() {
-        if (LocalDate.now().minusMonths(mesesDePrueba).isAfter(this.fechaIngreso)) {
-            this.estado = EstadoEmpleado.ALTA;
-        }
-    }
-
-    public boolean esAdmin() {
-        return cargo.equals(CargoEmpleado.ADMIN);
-    }
-
-    public void darDeBaja() {
-        this.estado = EstadoEmpleado.BAJA;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() +
-                "cargo=" + cargo +
-                ", estado empleado=" + estado +
-                ", fechaIngreso=" + fechaIngreso +
-                '}';
-    }
 
     @Override
     public void verCartelera() {

@@ -1,6 +1,10 @@
 package Enumeraciones;
 
 public enum EstadoUsuario {
-    ACTIVO,
-    INACTIVO,
+    ALTA,
+    BAJA,
+    LICENCIA,
+    FRANCO,
+    SUSPENDIDO,
+    BLACKLIST
 }

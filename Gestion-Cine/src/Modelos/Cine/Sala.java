@@ -2,45 +2,29 @@ package Modelos.Cine;
 
 import Enumeraciones.EstadoSala;
 import Enumeraciones.TipoSala;
-import Excepciones.ColeccionInvalidaException;
-import Excepciones.ElementoEnColeccionException;
-import Gestores.Cine.GestorButacas;
-
-import java.util.Objects;
 
 public class Sala {
-
-    //Atributos:
-
+    //Atributos
     private String numeroSala;
+    private int totalButacas;
     private EstadoSala estado;
     private TipoSala tipo;
-    private int totalButacas;
-    private GestorButacas butacasDisponibles; //Solamente informa la cantidad de butacas
-    //por ser una propiedad de sala.
 
-    //Constructor:
-
-    public Sala(String numeroSala, TipoSala tipo, int totalButacas) throws ColeccionInvalidaException, ElementoEnColeccionException {
+    //Constructor
+    public Sala(String numeroSala,int totalButacas,TipoSala tipo){
         this.numeroSala = numeroSala;
+        this.totalButacas = totalButacas;
         this.estado = EstadoSala.DISPONIBLE;
         this.tipo = tipo;
-        this.totalButacas = totalButacas;
-        this.butacasDisponibles = new GestorButacas(totalButacas);
     }
 
-    //Métodos:
-
-    //Ver sus butacas disponibles y reservadas:
-
-    public void verButacas(){
-        butacasDisponibles.imprimirButacas();
-    }
-
-    //Getters y Setters:
-
+    //Getters y Setters
     public String getNumeroSala() {
         return numeroSala;
+    }
+
+    public int getTotalButacas() {
+        return totalButacas;
     }
 
     public EstadoSala getEstado() {
@@ -55,48 +39,12 @@ public class Sala {
         this.numeroSala = numeroSala;
     }
 
+    public void setTotalButacas(int totalButacas) {
+        this.totalButacas = totalButacas;
+    }
+
     public void setTipo(TipoSala tipo) {
         this.tipo = tipo;
     }
 
-    public void setEstado(EstadoSala estado) {
-        this.estado = estado;
-    }
-
-    public void setTotalButacas(int totalButacas) throws ColeccionInvalidaException, ElementoEnColeccionException {
-        this.totalButacas = totalButacas;
-        this.butacasDisponibles = new GestorButacas(totalButacas);
-    }
-
-    public GestorButacas getTotalButacas() {
-        return butacasDisponibles;
-    }
-
-    //Equals y HashCode:
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        Sala sala = (Sala) object;
-        return Objects.equals(numeroSala, sala.numeroSala);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(numeroSala);
-    }
-
-    //toString:
-
-    @Override
-    public String toString() {
-        return "\n-----------------\n" +
-                "Numero de sala: " + numeroSala + ".\n" +
-                "Estado actual de la sala: " + estado + ".\n" +
-                "Tipo de sala: " + tipo + ".\n" +
-                "Capacidad máxima de personas: " + totalButacas +
-                ".\n" +
-                "\n-----------------\n";
-    }
 }

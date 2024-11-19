@@ -6,34 +6,30 @@ import java.time.LocalDate;
 
 public abstract class Persona {
     //Atributos
-    private int idUsuario;//Recibe un id que se enlace con el idUsuario del archivo de usuarios
     private String nombre;
     private String apellido;
+    //private User user;
     private String dni;
     private String email;
     private LocalDate fechaNacimiento;
-    private EstadoUsuario estadoUsuario;
 
-    public Persona(int idUsuario,String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento) {
-        this.idUsuario = idUsuario;
+
+    //Constructor //FALTAN VERIFICACIONES
+    public Persona(String nombre,String apellido,String dni,String email,LocalDate fechaNacimiento){
         this.nombre = nombre;
         this.apellido = apellido;
+        //this.user = new User(dni,dni);
         this.dni = dni;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
-        this.estadoUsuario = EstadoUsuario.ACTIVO;
     }
 
-    //Getters y Setters
-    public int getIdUsuario() {
-        return idUsuario;
-    }
-
+    //Getters y Setters //FALTAN VERIFICACIONES
     public String getNombre() {
         return nombre;
     }
 
-    public String getApellido() {
+    public String getApeliido() {
         return apellido;
     }
 
@@ -49,16 +45,12 @@ public abstract class Persona {
         return fechaNacimiento;
     }
 
-    public EstadoUsuario getEstadoUsuario() {
-        return estadoUsuario;
-    }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setApeliido(String apeliido) {
+        this.apellido = apeliido;
     }
 
     public void setDni(String dni) {
@@ -69,23 +61,8 @@ public abstract class Persona {
         this.email = email;
     }
 
-    public void setFechaNacimiento(LocalDate fecha) {
-        this.fechaNacimiento = fecha;
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
-    public void setEstadoUsuario(EstadoUsuario estadoUsuario) {
-        this.estadoUsuario = estadoUsuario;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "id='" + idUsuario + '\'' +
-                "nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", dni='" + dni + '\'' +
-                ", email='" + email + '\'' +
-                ", estado usuario='" + estadoUsuario + '\'' +
-                ", fechaNacimiento=" + fechaNacimiento;
-    }
 }
