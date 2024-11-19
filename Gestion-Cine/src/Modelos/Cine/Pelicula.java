@@ -9,6 +9,8 @@ import java.time.Duration;
 
 public class Pelicula {
     //Atributos
+    private int peliculaId;
+    public static int contador = 0;
     private String titulo;
     private Idioma idioma;
     private Idioma idiomaSubtitulos;
@@ -24,6 +26,7 @@ public class Pelicula {
     public Pelicula(String titulo,Idioma idioma,Idioma idiomaSubtitulos,Duration duracion, String productor,
                     String director,String añoLanzamiento,String pais,ClasificacionEdad clasificacionEdad,
                     GeneroPelicula generoPelicula){
+        this.peliculaId = ++contador;
         this.titulo = titulo;
         this.idioma = idioma;
         this.idiomaSubtitulos = idiomaSubtitulos;
@@ -37,6 +40,11 @@ public class Pelicula {
     }
 
     //Getters y Setters
+
+
+    public int getPeliculaId() {
+        return peliculaId;
+    }
 
     public String getTitulo() {
         return titulo;

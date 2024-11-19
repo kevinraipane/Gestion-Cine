@@ -2,10 +2,10 @@ package Modelos.General;
 
 import Enumeraciones.CollectionOrMap;
 import Enumeraciones.TipoColeccion;
-import Excepciones.ColeccionInvalidaException;
-import Excepciones.ColeccionVaciaException;
-import Excepciones.ElementoEnColeccionException;
-import Excepciones.ElementoNoEncontradoException;
+import Excepciones.KevPF98.Flexibles.ColeccionInvalidaException;
+import Excepciones.KevPF98.Flexibles.ColeccionVaciaException;
+import Excepciones.KevPF98.Flexibles.ElementoEnColeccionException;
+import Excepciones.KevPF98.Flexibles.ElementoNoEncontradoException;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -86,13 +86,13 @@ public class Crud <K, T>{
         };
     }
 
-    // -------------------------------------------------------------------------- //
+    /// -------------------------------------------------------------------------- ///
 
-    //Método de inserción:
+    ///Método de inserción:
 
-    // -------------------------------------------------------------------------- //
+    /// -------------------------------------------------------------------------- ///
 
-    public void agregar(K key /*solo si es map*/, T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException {
+    public void agregar(K key /*solo si es map*/, T objeto, boolean permitirDuplicados/*, boolean mostrarMensajeExito*/ /*En el caso de agregar 100 butacas automaticamente, no me interesa ver mensaje de exito 100 veces.*/) throws ElementoEnColeccionException {
         if(implementa == CollectionOrMap.COLLECTION){
             if(permitirDuplicados || !collection.contains(objeto)){
                 collection.add(objeto);
@@ -105,11 +105,51 @@ public class Crud <K, T>{
         else if(implementa == CollectionOrMap.MAP){
             if (!map.containsKey(key)){
                 map.put(key, objeto);
-                System.out.println("Elemento agregado con éxito.");
+                /*if (mostrarMensajeExito){*/
+                    System.out.println("Elemento agregado con éxito.");
+                //}
+            }else{
+                throw new ElementoEnColeccionException(CollectionOrMap.MAP);
             }
-            throw new ElementoEnColeccionException(CollectionOrMap.MAP);
         }
     }
+
+    ///Sobrecarga (más sencillo para trabajar con collections de 1 solo valor):
+
+    public void agregar(T objeto, boolean permitirDuplicados/*, boolean mostrarMensajeExito*/) throws ElementoEnColeccionException {
+        agregar(null, objeto, permitirDuplicados/*, mostrarMensajeExito*/);
+    }
+
+    ///Para agregar muchos elementos iterando, maps (lo comenté pq agregaba + complejidad en 1 detalle):
+
+    /*
+    public void agregarSinMensajeExito(K key, T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException {
+        agregar(key, objeto, permitirDuplicados, false);
+    }*/
+
+    ///Para agregar muchos elementos iterando, collections:
+
+    /*
+    public void agregarSinMensajeExito(T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException{
+        agregar(objeto, permitirDuplicados, false);
+    }*/
+
+    ///Para agregar 1 elemento, maps:
+
+    /*
+    public void agregarConMensajeExito(K key, T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException {
+        agregar(key, objeto, permitirDuplicados, true);
+    }*/
+
+    ///Para agregar 1 elemento, collections:
+
+    /*
+    public void agregarConMensajeExito(T objeto, boolean permitirDuplicados) throws ElementoEnColeccionException{
+        agregar(objeto, permitirDuplicados, true);
+    }
+    */
+
+
 
 
     // -------------------------------------------------------------------------- //
@@ -180,6 +220,32 @@ public class Crud <K, T>{
         else{
             throw new ColeccionInvalidaException(CollectionOrMap.COLLECTION);
         }
+    }
+
+    //Recibir un atributo de la clave (ej: atributo DniCliente, de: clave Butaca) y devolver una lista
+    //de coincidencias (ej: todos los asientos reservados de X persona).
+
+    public List<T> buscarPorAtributoEnValores(Predicate<T> condicion) throws ColeccionVaciaException, ColeccionInvalidaException{
+
+        List<T> elementosCoincidentes = new ArrayList<>();
+
+        if (implementa == CollectionOrMap.MAP){
+            if(!map.isEmpty()){
+                for (T elemento : map.values()) {
+                    if (condicion.test(elemento)) {
+                        elementosCoincidentes.add(elemento);
+                    }
+                }
+            }
+            else{
+                throw new ColeccionVaciaException();
+            }
+        }
+        else{
+            throw new ColeccionInvalidaException();
+        }
+
+        return elementosCoincidentes; //Comprobar si devuelve empty y validar.
     }
 
 
@@ -300,6 +366,19 @@ Llamada del método desde gestor general:
         }
     }
 
+    public void mostrarCoincidenciasEnMap(Predicate<T> condicion) throws ColeccionInvalidaException, ColeccionVaciaException, ElementoNoEncontradoException {
+        List<T> coincidencias = buscarPorAtributoEnValores(condicion);
+        //Lista de values, que tuvieron el parámetro solicitado.
+        if (!coincidencias.isEmpty()){
+            for (T elemento : coincidencias){
+                System.out.println(elemento);
+            }
+        }
+        else{
+            throw new ElementoNoEncontradoException();
+        }
+    }
+
 
     // -------------------------------------------------------------------------- //
 
@@ -393,5 +472,26 @@ Llamada del método desde gestor general:
 
 
     // -------------------------------------------------------------------------- //
+
+    // -------------------------------------------------------------------------- //
+
+    // Método extra (confirmación que se repite en métodos de cada gestor):
+
+    // -------------------------------------------------------------------------- //
+
+
+    /// Pedir confirmación (será reemplazado por el método de Mati dsps):
+
+    /*public boolean pedirConfirmacion(String mensaje) {
+        Scanner scanner = new Scanner(System.in);
+        String respuesta;
+        do {
+            System.out.println(mensaje + " S/N");
+            respuesta = scanner.nextLine();
+            if (respuesta.equalsIgnoreCase("S")) return true;
+            if (respuesta.equalsIgnoreCase("N")) return false;
+            System.out.println("Entrada inválida.");
+        } while (true);
+    }*/
 
 }

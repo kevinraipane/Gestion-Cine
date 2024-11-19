@@ -1,4 +1,4 @@
-package Excepciones;
+package Excepciones.KevPF98.Butacas;
 
 public class ButacaInexistenteException extends Exception{
 

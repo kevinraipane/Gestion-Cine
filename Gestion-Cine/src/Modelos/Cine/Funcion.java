@@ -1,6 +1,8 @@
 package Modelos.Cine;
 
 import Enumeraciones.EstadoFuncion;
+import Excepciones.KevPF98.Flexibles.ColeccionInvalidaException;
+import Gestores.Cine.GestorButacas;
 //import Modelos.General.BaseEntity;
 
 import java.util.Objects;
@@ -13,17 +15,19 @@ public class Funcion /*extends BaseEntity<Integer>*/ {
     public static int contador = 0;
     private Pelicula pelicula;
     private Sala sala;
+    private GestorButacas lugaresDisponibles;
     private Horario horario;
     private double valor;
     private EstadoFuncion estadoFuncion;
 
     //Constructor:
 
-    public Funcion(Pelicula pelicula, Sala sala, Horario horario, double valor, EstadoFuncion estadoFuncion) {
+    public Funcion(Pelicula pelicula, Sala sala, int cantButacas, Horario horario, double valor, EstadoFuncion estadoFuncion) throws ColeccionInvalidaException {
         this.idFuncion = ++contador;
         //super(++contador);
         this.pelicula = pelicula;
         this.sala = sala;
+        this.lugaresDisponibles = new GestorButacas(cantButacas);
         this.horario = horario;
         this.valor = valor;
         this.estadoFuncion = estadoFuncion;
@@ -76,6 +80,10 @@ public class Funcion /*extends BaseEntity<Integer>*/ {
         this.estadoFuncion = estadoFuncion;
     }
 
+    public GestorButacas getLugaresDisponibles() {
+        return lugaresDisponibles;
+    }
+
     //Equals y HashCode:
 
     @Override
@@ -108,11 +116,12 @@ public class Funcion /*extends BaseEntity<Integer>*/ {
 
     public String toString() {
         return  "\n-----------------\n" +
-                "Id de la función: " + /*idFuncion*/ getIdFuncion() + ".\n" +
+                "Id de la función: " + idFuncion /*getIdFuncion()*/ + ".\n" +
                 "Película: " + pelicula + ".\n" +
                 "Sala: " + sala + ".\n" +
                 "Horario: " + horario + ".\n" +
                 "Valor: " + valor + ".\n" +
+                "Capacidad total: " + lugaresDisponibles.contarButacas() + " personas.\n" +
                 "Estado actual de la función: " + estadoFuncion + ".\n" +
                 "\n-----------------\n";
     }
