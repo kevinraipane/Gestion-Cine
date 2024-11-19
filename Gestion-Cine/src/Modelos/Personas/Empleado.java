@@ -50,11 +50,22 @@ public class Empleado extends Persona implements IVisualizable {
         return (estado.equals(EstadoEmpleado.ALTA) || (estado.equals(EstadoEmpleado.A_PRUEBA)));
     }
 
+    public boolean dadoDeBaja() {
+        return estado.equals(EstadoEmpleado.BAJA);
+    }
+
     public void aPlantaPermanente() {
         if (LocalDate.now().minusMonths(mesesDePrueba).isAfter(this.fechaIngreso)) {
             this.estado = EstadoEmpleado.ALTA;
         }
+    }
 
+    public boolean esAdmin() {
+        return cargo.equals(CargoEmpleado.ADMIN);
+    }
+
+    public void darDeBaja() {
+        this.estado = EstadoEmpleado.BAJA;
     }
 
     @Override

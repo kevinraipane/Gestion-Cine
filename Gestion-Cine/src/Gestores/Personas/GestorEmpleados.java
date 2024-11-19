@@ -1,6 +1,7 @@
 package Gestores.Personas;
 
 import Enumeraciones.CargoEmpleado;
+import Enumeraciones.EstadoEmpleado;
 import Excepciones.DNIExistenteException;
 import Excepciones.DNIInexistenteException;
 import Gestores.Funcionales.GestorConsola;
@@ -49,6 +50,31 @@ public class GestorEmpleados {
     public void eliminarEmpleado(String dni) throws DNIInexistenteException {
         if (empleados.containsKey(dni)) {
             empleados.remove(dni);
+        } else {
+            throw new DNIInexistenteException(dni);
+        }
+    }
+
+    public void bajaEmpleado(String dni) throws DNIInexistenteException {
+        if (empleados.containsKey(dni)) {
+            Empleado empleadoActual = empleados.get(dni);
+
+            if (!empleadoActual.dadoDeBaja()) {
+                int cantAdmins = 0;
+                for (Empleado empleado : empleados.values()) {
+                    if (empleado.esAdmin()) {
+                        cantAdmins++;
+                    }
+                }
+
+                if (empleadoActual.esAdmin() && cantAdmins > 1) {
+                    empleadoActual.darDeBaja();
+                } else {
+                    System.out.print("El empleado con DNI: " + dni + " es el unico ADMIN del sistema. " +
+                            "No puede ser dado de baja.");
+                }
+
+            }
         } else {
             throw new DNIInexistenteException(dni);
         }
