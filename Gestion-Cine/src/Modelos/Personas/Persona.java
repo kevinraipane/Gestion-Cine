@@ -21,7 +21,7 @@ public abstract class Persona {
         this.dni = dni;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
-        this.estadoUsuario = EstadoUsuario.ALTA;
+        this.estadoUsuario = EstadoUsuario.ACTIVO;
     }
 
     //Getters y Setters

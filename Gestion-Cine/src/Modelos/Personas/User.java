@@ -24,7 +24,7 @@ public class User {
         this.idUsuario = idUsuario;
         this.username = username;
         this.password = GestorContraseña.encriptadorContraseña(password);
-        this.estadoUsuario = EstadoUsuario.ALTA;
+        this.estadoUsuario = EstadoUsuario.ACTIVO;
     }
 
     //Getters y Setters

@@ -5,6 +5,7 @@ import Modelos.Personas.Empleado;
 import Modelos.Personas.Sesion;
 import Modelos.Personas.User;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
@@ -16,6 +17,9 @@ public class Main {
         Sesion sesion = new Sesion();
         Scanner scanner = new Scanner(System.in);
 
+        //Verifico si existe el archivo JSON de usuarios
+        verificarYCrearAdminPorDefecto(gestorUser,gestorEmpleados);
+
         //Iniciar sesion
         iniciarSesion(sesion, gestorUser, scanner);
 
@@ -23,6 +27,29 @@ public class Main {
         menuPrincipal(gestorUser,gestorClientes,gestorEmpleados,sesion,scanner);
 
         scanner.close();
+    }
+
+    private static void verificarYCrearAdminPorDefecto(GestorUser gestorUser,GestorEmpleados gestorEmpleados){
+        String archivoUsuarios = "usuarios.json";
+        File archivo = new File(archivoUsuarios);
+
+        if(!archivo.exists() || archivo.length() == 0){
+            System.out.println("No se encontro el archivo de usuarios.");
+            System.out.println("Creando administrador por defecto...");
+
+            //Creo un empleado generico del tipo admin
+            Empleado admin = gestorEmpleados.crearEmpleadoAdministradorPorDefecto();
+            try {
+                gestorEmpleados.agregarNuevoEmpleado(admin);
+
+                //Crear usuario asociado al admin generico
+                gestorUser.create("admin","adminadmin");
+                System.out.println("Administrador creado con usuario: admin / Contraseña: adminadmin");
+                System.out.println("Recomendacion: Actualize su datos y credenciales.");
+            }catch (Exception e){
+                System.err.println("Error al crear el administrador generico por defecto: " +e.getMessage());
+            }
+        }
     }
 
     private static void iniciarSesion(Sesion sesion, GestorUser gestorUser, Scanner scanner) {
@@ -88,8 +115,8 @@ public class Main {
             System.out.println("\n--- GESTIÓN DE USUARIOS ---");
             System.out.println("1. Modificar mi usuario");
             System.out.println("2. Modificar un usuario (Admin)");
-            //AGREGAR A LA OPCION 2 PODER CAMBIAR EL ESTADO DEL USUARIO, ALTA O BAJA
-            //SI LO DOY DE BAJA, TAMBIEN TIENE QUE
+            //AGREGAR A LA OPCION 2 PODER CAMBIAR EL ESTADO DEL USUARIO, ACTIVO O INACTIVO
+            //SI LO DOY DE INACTIVO, TAMBIEN TIENE QUE
             System.out.println("3. Buscar Usuario por ID");
             System.out.println("4. Buscar Usuario por Nombre de Usuario");
             System.out.println("5. Listar todos los usuarios");
@@ -285,37 +312,20 @@ public class Main {
     private static void modificarMiUsuario(GestorUser gestorUser, Sesion sesion, Scanner scanner) {
         User usuarioActual = sesion.getUsuarioActual();
 
+        // Llamar al metodo para seleccionar y modificar el usuario
         System.out.println("Modificando mi usuario:");
-        System.out.println("Nombre de usuario actual: " + usuarioActual.getUsername());
-        System.out.print("Ingrese el nuevo nombre de usuario: ");
-        String nuevoUsername = scanner.nextLine();
-        System.out.print("Ingrese la nueva contraseña: ");
-        String nuevaPassword = scanner.nextLine();
-
-        try {
-            gestorUser.modificarUsuario(usuarioActual.getIdUsuario(), nuevoUsername, nuevaPassword);
-            System.out.println("Usuario modificado exitosamente.");
-        } catch (Exception e) {
-            System.out.println("Error al modificar el usuario: " + e.getMessage());
-        }
+        gestorUser.seleccionarYModificarUsuario(usuarioActual.getIdUsuario(), scanner);
     }
+
 
     private static void modificarUsuarioPorId(GestorUser gestorUser, Scanner scanner) {
         System.out.print("Ingrese el ID del usuario que desea modificar: ");
         int id = scanner.nextInt();
         scanner.nextLine(); // Consumir salto de línea
 
-        System.out.print("Ingrese el nuevo nombre de usuario: ");
-        String nuevoUsername = scanner.nextLine();
-        System.out.print("Ingrese la nueva contraseña: ");
-        String nuevaPassword = scanner.nextLine();
-
-        try {
-            gestorUser.modificarUsuario(id, nuevoUsername, nuevaPassword);
-            System.out.println("Usuario modificado exitosamente.");
-        } catch (Exception e) {
-            System.out.println("Error al modificar el usuario: " + e.getMessage());
-        }
+        // Llamar al metodo para seleccionar y modificar el usuario
+        gestorUser.seleccionarYModificarUsuario(id, scanner);
     }
+
 }
 

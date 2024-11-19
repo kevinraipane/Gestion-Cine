@@ -39,7 +39,27 @@ public class GestorEmpleados {
         return new Empleado(idUsuario,nombre, apellido, dni, email, fechaNacimiento, cargo);
     }
 
-    /// AGREGAR EMPLEADO A LA LISTA -----------------------------------------------------------------------------------
+    /// AGREGAR ADMIN POR DEFECTO ----------------------------------------------------------------------------------
+
+    public Empleado crearEmpleadoAdministradorPorDefecto() {
+        // Valores predeterminados para el administrador
+        int idUsuario = 1; // ID predeterminado
+        String dni = "00000000"; // DNI predeterminado
+        String nombre = "Admin"; // Nombre del administrador
+        String apellido = "Default"; // Apellido del administrador
+        String email = "admin@default.com"; // Email predeterminado
+        LocalDate fechaNacimiento = LocalDate.of(1980, 1, 1); // Fecha de nacimiento predeterminada
+
+        // Asumimos que el cargo del empleado es 'Administrador'
+        CargoEmpleado cargo = CargoEmpleado.ADMIN;
+
+        // Crear y devolver el nuevo empleado administrador
+        return new Empleado(idUsuario, nombre, apellido, dni, email, fechaNacimiento, cargo);
+    }
+
+
+
+        /// AGREGAR EMPLEADO A LA LISTA -----------------------------------------------------------------------------------
 
     public void agregarNuevoEmpleado(Empleado empleado) {
         empleados.put(empleado.getDni(), empleado);
@@ -50,7 +70,32 @@ public class GestorEmpleados {
     public void eliminarEmpleado(String dni) throws DniInexistenteException {
         if (empleados.containsKey(dni)) {
             Empleado empleadoAux = buscarEmpleadoPorDNI(dni);
-            empleadoAux.setEstadoUsuario(EstadoUsuario.BAJA);
+            empleadoAux.setEstadoUsuario(EstadoUsuario.INACTIVO);
+        } else {
+            throw new DniInexistenteException(dni);
+        }
+    }
+
+    public void bajaEmpleado(String dni) throws DniInexistenteException {
+        if (empleados.containsKey(dni)) {
+            Empleado empleadoActual = empleados.get(dni);
+
+            if (!empleadoActual.dadoDeBaja()) {
+                int cantAdmins = 0;
+                for (Empleado empleado : empleados.values()) {
+                    if (empleado.esAdmin()) {
+                        cantAdmins++;
+                    }
+                }
+
+                if (empleadoActual.esAdmin() && cantAdmins > 1) {
+                    empleadoActual.darDeBaja();
+                } else {
+                    System.out.print("El empleado con DNI: " + dni + " es el unico ADMIN del sistema. " +
+                            "No puede ser dado de baja.");
+                }
+
+            }
         } else {
             throw new DniInexistenteException(dni);
         }

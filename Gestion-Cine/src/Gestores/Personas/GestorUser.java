@@ -5,6 +5,7 @@ import Excepciones.ColeccionVaciaException;
 import Excepciones.CredencialesInvalidasException;
 import Excepciones.UserNoEncontradoException;
 import Excepciones.UsuarioYaExisteException;
+import Gestores.Funcionales.GestorConsola;
 import Modelos.Personas.User;
 
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -23,6 +25,7 @@ import java.util.Set;
 public class GestorUser {
     private static final String FILE_PATH = "usuarios.json";
     Scanner scanner = new Scanner(System.in);
+    GestorConsola gestorConsola = new GestorConsola();
 
     private Set<User> usuarios;
     private int lastId = 0;
@@ -53,8 +56,8 @@ public class GestorUser {
         }
     }
 
-    //Actualizar usuario, le paso el tempUser, para modificar los datos del usuario logueado
-    public void modificarUsuario(int idUsuario,String nuevoUsername,String nuevaPassword)
+    //Modificar un usuario
+    public void modificarUsuario(int idUsuario,String nuevoUsername,String nuevaPassword,EstadoUsuario nuevoEstadoUsuario)
             throws UserNoEncontradoException{
 
         User usuario = buscarPorId(idUsuario);
@@ -63,11 +66,71 @@ public class GestorUser {
             throw new UserNoEncontradoException("No se encontro el usuario con ID: " +idUsuario);
         }
 
-        usuario.setUsername(nuevoUsername);
-        usuario.setPassword(GestorContraseña.encriptadorContraseña(nuevaPassword));
+        //Modifico solo los atributos que no sean nulos
+        if(nuevoUsername != null && !nuevoUsername.isEmpty()){
+            usuario.setUsername(nuevoUsername);
+        }
+
+        if(nuevaPassword != null && !nuevaPassword.isEmpty()){
+            usuario.setPassword(GestorContraseña.encriptadorContraseña(nuevaPassword));
+        }
+
+        if(nuevoEstadoUsuario != null){
+            usuario.setEstadoUsuario(nuevoEstadoUsuario);
+        }
+
         guardarUsuarios();
         System.out.println("Usuario con ID " +idUsuario+ " modificado con exito.");
     }
+
+    public void seleccionarYModificarUsuario(int idUsuario,Scanner scanner){
+        User usuario = buscarPorId(idUsuario);
+        if(usuario == null){
+            System.out.println("No se encontro el usuario con ID: " +idUsuario);
+            return;
+        }
+
+        //Muestro las opciones de modificacion
+        System.out.println("¿Qué atributo desea modificar del usuario?");
+        System.out.println("1. Modificar Username");
+        System.out.println("2. Modificar Password");
+        System.out.println("3. Modificar Estado del Usuario");
+        System.out.println("4. Modificar todos los atributos");
+        System.out.print("Seleccione una opción: ");
+
+        int opcion = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (opcion) {
+            case 1:
+                System.out.print("Ingrese el nuevo username: ");
+                String nuevoUsername = scanner.nextLine();
+                modificarUsuario(idUsuario, nuevoUsername, usuario.getPassword(), usuario.getEstadoUsuario());
+                break;
+            case 2:
+                System.out.print("Ingrese la nueva contraseña: ");
+                String nuevaPassword = scanner.nextLine();
+                modificarUsuario(idUsuario, usuario.getUsername(), nuevaPassword, usuario.getEstadoUsuario());
+                break;
+            case 3:
+                System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
+                EstadoUsuario nuevoEstado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                modificarUsuario(idUsuario, usuario.getUsername(), usuario.getPassword(), nuevoEstado);
+                break;
+            case 4:
+                System.out.print("Ingrese el nuevo username: ");
+                String username = scanner.nextLine();
+                System.out.print("Ingrese la nueva contraseña: ");
+                String password = scanner.nextLine();
+                System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
+                EstadoUsuario estado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                modificarUsuario(idUsuario, username, password, estado);
+                break;
+            default:
+                System.out.println("Opción no válida.");
+        }
+    }
+
 
     //Actualizar un usuario, recibe un id, para modificar los campos. SOLO DEL ADMIN.
     //Forma para que vea el id del usuario que quiere modificar, y no lo tengo que llevar de memoria por mucho tiempo
@@ -115,7 +178,7 @@ public class GestorUser {
             throws UserNoEncontradoException{
         User usuarioAEliminar = buscarPorUsername(username);
         if(usuarioAEliminar != null){
-            usuarioAEliminar.setEstadoUsuario(EstadoUsuario.BAJA);
+            usuarioAEliminar.setEstadoUsuario(EstadoUsuario.INACTIVO);
             guardarUsuarios(); //Guardo los cambios despues de la eliminacion.
             System.out.println("Usuario eliminado: " +username);
         }else{
@@ -134,7 +197,7 @@ public class GestorUser {
         throws UserNoEncontradoException, CredencialesInvalidasException{
         User usuario = buscarPorUsername(username);
         if(usuario != null && usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))){//Valido la contraseña
-            if(usuario.getEstadoUsuario() == EstadoUsuario.BAJA){
+            if(usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO){
                 throw new CredencialesInvalidasException("El usuario esta desactivado (Dado de baja).");
             }
             return usuario; //Retorno el usuario sin las credenciales son correctas y esta activo.
