@@ -31,7 +31,7 @@ public class GestorUser {
 
     public GestorUser() {
         this.usuarios = new HashSet<>();
-        cargarUsuarios();//Cargar los usuarios desde el archivo JSON al iniciar
+        cargarUsuarios(); //Cargar los usuarios desde el archivo JSON al iniciar
     }
 
 
@@ -47,12 +47,11 @@ public class GestorUser {
         }
 
         //Si no existe, se crea un nuevo usuario con el ultimo ID
-        int newId = (++lastId);//Incremento el id que tengo leido desde el json
-        User newUser = new User(newId, username, password);
+        User newUser = new User(lastId++, username, password);
 
         if (usuarios.add(newUser)) {
             guardarUsuarios();//Guardo los cambios en JSON
-            System.out.println("Usuario creado:" + newUser.getUsername());
+            System.out.println("Usuario creado: " + newUser.getUsername());
 
         } else {
             throw new UsuarioYaExisteException("El usuario ya existe en el sistema.");
@@ -61,86 +60,76 @@ public class GestorUser {
 
     /// MODIFICAR USUARIO ----------------------------------------------------------------------
 
-    public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstadoUsuario)
-            throws UserNoEncontradoException {
+    public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstado) throws UserNoEncontradoException {
+        User usuario = null;
 
-        User usuario = buscarPorId(idUsuario);
+        try {
+            usuario = buscarPorId(idUsuario);
 
-        if (usuario == null) {
-            throw new UserNoEncontradoException("No se encontro el usuario con ID: " + idUsuario);
-        }
-
-        //Modifico solo los atributos que no sean nulos
-        if (nuevoUsername != null && !nuevoUsername.isEmpty()) {
             usuario.setUsername(nuevoUsername);
-        }
+            usuario.setPassword(nuevaPassword);
+            usuario.setEstadoUsuario(nuevoEstado);
 
-        if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
-            usuario.setPassword(GestorContraseña.encriptadorContraseña(nuevaPassword));
-        }
+            guardarUsuarios();
+            System.out.println("Usuario con ID " + idUsuario + " modificado con exito.");
 
-        if (nuevoEstadoUsuario != null) {
-            usuario.setEstadoUsuario(nuevoEstadoUsuario);
+        } catch (UserNoEncontradoException e) {
+            System.err.println("ERROR: " + e.getMessage());
         }
-
-        guardarUsuarios();
-        System.out.println("Usuario con ID " + idUsuario + " modificado con exito.");
     }
 
     public void modificarUsuario(int idUsuario, Scanner scanner) {
-        User usuario = buscarPorId(idUsuario);
+        try {
+            User usuario = buscarPorId(idUsuario);
+            String username = usuario.getUsername();
+            String password = usuario.getPassword();
+            EstadoUsuario estadoUsuario = usuario.getEstadoUsuario();
+            int opcion = -1;
 
-        if (usuario == null) {
-            System.out.println("No se encontro el usuario con ID: " + idUsuario);
-            return;
+            do {
+                System.out.println("¿Qué atributo desea modificar del usuario?");
+                System.out.println("1. Modificar Username");
+                System.out.println("2. Modificar Password");
+                System.out.println("3. Dar de BAJA/ALTA el Usuario");
+                System.out.println("4. Modificar todos los atributos");
+                System.out.println("0. Salir");
+                System.out.print("Seleccione una opción: ");
+
+                opcion = scanner.nextInt();
+                scanner.nextLine();
+
+            } while (opcion < 0 || opcion > 4);
+
+            switch (opcion) {
+                case 1:
+                    username = capturarUsername();
+                    break;
+
+                case 2:
+                    password = capturarPassword();
+                    break;
+
+                case 3:
+                    System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
+                    estadoUsuario = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                    break;
+
+                case 4:
+                    username = capturarUsername();
+                    password = capturarPassword();
+                    System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
+                    estadoUsuario = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                    break;
+
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+            reemplazarUsuario(idUsuario, username, password, estadoUsuario);
+
+        } catch (UserNoEncontradoException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
-
-        System.out.println("¿Qué atributo desea modificar del usuario?");
-        System.out.println("1. Modificar Username");
-        System.out.println("2. Modificar Password");
-        System.out.println("3. Dar de BAJA/ALTA el Usuario");
-        System.out.println("4. Modificar todos los atributos");
-        System.out.print("Seleccione una opción: ");
-
-        int opcion = scanner.nextInt();
-        scanner.nextLine();
-
-        switch (opcion) {
-            case 1:
-                System.out.print("Ingrese el nuevo username: ");
-                String nuevoUsername = capturarUsername();
-                reemplazarUsuario(idUsuario, nuevoUsername, usuario.getPassword(), usuario.getEstadoUsuario());
-                break;
-
-            case 2:
-                System.out.print("Ingrese la nueva contraseña: ");
-                String nuevaPassword = capturarPassword();
-                reemplazarUsuario(idUsuario, usuario.getUsername(), nuevaPassword, usuario.getEstadoUsuario());
-                break;
-
-            case 3:
-                System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
-                EstadoUsuario nuevoEstado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
-                reemplazarUsuario(idUsuario, usuario.getUsername(), usuario.getPassword(), nuevoEstado);
-                break;
-
-            case 4:
-                System.out.print("Ingrese el nuevo username: ");
-                String username = capturarUsername();
-                System.out.print("Ingrese la nueva contraseña: ");
-                String password = capturarPassword();
-                System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
-                EstadoUsuario estado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
-                reemplazarUsuario(idUsuario, username, password, estado);
-                break;
-
-            default:
-                System.out.println("Opción no válida.");
-        }
-    }
-
-    public void modificarUsuarioPorId(Scanner scanner, int idUsuario) {
-        modificarUsuario(idUsuario, scanner);
     }
 
     /// INGRESO DE DATOS --------------------------------------------------------------
@@ -240,6 +229,7 @@ public class GestorUser {
     public void eliminarUsuario(String username)
             throws UserNoEncontradoException {
         User usuarioAEliminar = buscarPorUsername(username);
+
         if (usuarioAEliminar != null) {
             usuarioAEliminar.setEstadoUsuario(EstadoUsuario.INACTIVO);
             guardarUsuarios(); //Guardo los cambios despues de la eliminacion.
@@ -271,19 +261,26 @@ public class GestorUser {
     }
 
     public User iniciarSesion(String username, String password)
-            throws UserNoEncontradoException, CredencialesInvalidasException {
+            throws CredencialesInvalidasException {
 
-        User usuario = buscarPorUsername(username);
+        try {
+            User usuario = buscarPorUsername(username);
 
-        if (usuario != null && usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))) {//Valido la contraseña
-            if (usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO) {
-                throw new CredencialesInvalidasException("El usuario esta desactivado (Dado de baja).");
+            if (usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))) {
+                if (usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO) {
+                    throw new CredencialesInvalidasException("El usuario esta desactivado (Dado de baja).");
+                }
+
+                return usuario;
+            } else {
+                throw new CredencialesInvalidasException("Credenciales incorrectas.");
             }
-            return usuario; //Retorno el usuario sin las credenciales son correctas y esta activo.
 
-        } else {
-            throw new CredencialesInvalidasException("Credenciales incorrectas.");
+        } catch (UserNoEncontradoException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
+
+        return null;
     }
 
 
