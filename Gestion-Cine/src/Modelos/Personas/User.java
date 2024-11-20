@@ -1,8 +1,6 @@
 package Modelos.Personas;
 
 import Enumeraciones.EstadoUsuario;
-import Excepciones.PasswordNoValidaException;
-import Excepciones.UsernameNoValidoException;
 import Gestores.Funcionales.GestorConsola;
 import Gestores.Personas.GestorContraseña;
 
@@ -23,7 +21,7 @@ public class User {
     public User(int idUsuario,String username, String password){
         this.idUsuario = idUsuario;
         this.username = username;
-        this.password = GestorContraseña.encriptadorContraseña(password);
+        this.password = password;
         this.estadoUsuario = EstadoUsuario.ACTIVO;
     }
 

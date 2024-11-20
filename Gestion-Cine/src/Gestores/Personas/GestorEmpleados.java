@@ -25,7 +25,6 @@ public class GestorEmpleados {
     int lastId = 0;
     HashMap<String, Empleado> empleados;
 
-    GestorConsola gestorConsola = new GestorConsola();
     GestorPersonas gestorPersonas = new GestorPersonas();
     GestorUser gestorUser = new GestorUser();
     Scanner scanner = new Scanner(System.in);
@@ -47,7 +46,7 @@ public class GestorEmpleados {
         LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
 
         System.out.println("Cargo del empleado");
-        CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+        CargoEmpleado cargo = GestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
 
         return new Empleado(idUsuario, nombre, apellido, dni, email, fechaNacimiento, cargo);
     }
@@ -161,7 +160,7 @@ public class GestorEmpleados {
     /// MODIFICAR EMPLEADOS ----------------------------------------------------------------------------------
 
     public Empleado modificarEmpleado(String dni) {
-        Empleado empleado = null;
+        Empleado empleado;
 
         try {
             empleado = buscarEmpleadoPorDNI(dni);
@@ -173,6 +172,7 @@ public class GestorEmpleados {
         int opcion;
         do {
             opcion = mostrarMenuModificacion();
+            CargoEmpleado cargo;
 
             switch (opcion) {
                 case 1:
@@ -193,7 +193,7 @@ public class GestorEmpleados {
 
                 case 5:
                     System.out.println("Cargo del empleado:");
-                    CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                    cargo = GestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
                     empleado.setCargo(cargo);
                     break;
 
@@ -207,7 +207,7 @@ public class GestorEmpleados {
                     empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
                     empleado.setEmail(gestorPersonas.leerEmail());
                     System.out.println("Cargo del empleado:");
-                    cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                    cargo = GestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
                     empleado.setCargo(cargo);
                     break;
 
@@ -224,18 +224,20 @@ public class GestorEmpleados {
     }
 
     private int mostrarMenuModificacion() {
-        int opcion = -1;
+        int opcion;
         do {
             try {
-                System.out.print("Seleccione el dato que desea modificar:\n" +
-                        "[1] Nombre\n" +
-                        "[2] Apellido\n" +
-                        "[3] Fecha de Nacimiento\n" +
-                        "[4] Email\n" +
-                        "[5] Cargo\n" +
-                        "[6] Estado\n" +
-                        "[7] Modificar todos los campos\n" +
-                        "[0] Salir\n");
+                System.out.print("""
+                        Seleccione el dato que desea modificar:
+                        [1] Nombre
+                        [2] Apellido
+                        [3] Fecha de Nacimiento
+                        [4] Email
+                        [5] Cargo
+                        [6] Estado
+                        [7] Modificar todos los campos
+                        [0] Salir
+                        """);
                 opcion = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Por favor, ingrese un número.");
@@ -247,7 +249,10 @@ public class GestorEmpleados {
 
     private void cambiarEstadoEmpleado(Empleado empleado) {
         System.out.println(empleado.estaActivo() ? "Desea dar de BAJA el empleado?" : "Desea dar de ALTA el empleado?");
-        System.out.println("[1] SI\n[2] NO");
+        System.out.print("""
+                [1] SI
+                [2] NO
+                """);
 
         int opcion = Integer.parseInt(scanner.nextLine());
         if (opcion == 1) {
@@ -346,13 +351,13 @@ public class GestorEmpleados {
             dni = scanner.nextLine().trim();
             valido = true;
 
-            if (!gestorConsola.esLargoValido(dni, 7, 8)) {
+            if (!GestorConsola.esLargoValido(dni, 7, 8)) {
                 System.out.println("El dni debe contener entre 7 (siete) y 8 (ocho) caracteres");
                 valido = false;
             }
 
             try {
-                gestorConsola.contieneSoloNumeros(dni);
+                GestorConsola.contieneSoloNumeros(dni);
             } catch (NumberFormatException e) {
                 System.out.println("El dni solo puede contener numeros");
                 valido = false;

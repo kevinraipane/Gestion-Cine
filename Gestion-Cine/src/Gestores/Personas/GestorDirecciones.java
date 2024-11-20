@@ -8,7 +8,6 @@ import java.util.Scanner;
 public class GestorDirecciones {
 
     Scanner scanner = new Scanner(System.in);
-    GestorConsola gestorConsola = new GestorConsola();
 
     public Direccion cargarDireccion () {
         String calle = leerCalle();
@@ -19,8 +18,8 @@ public class GestorDirecciones {
     }
 
     public String leerCalle() {
-        String calle = "";
-        boolean valido = false;
+        String calle;
+        boolean valido;
 
         do {
             System.out.println("Ingrese el nombre de la calle: ");
@@ -28,17 +27,17 @@ public class GestorDirecciones {
             scanner.nextLine();
             valido = true;
 
-            if (gestorConsola.estaVacio(calle)) {
+            if (GestorConsola.estaVacio(calle)) {
                 System.out.println("La calle no puede estar vacia");
                 valido = false;
             }
 
-            if (gestorConsola.contieneCaracteresNoValidos(calle)) {
+            if (GestorConsola.contieneCaracteresNoValidos(calle)) {
                 System.out.println("La calle solo puede contener letras o numeros");
                 valido = false;
             }
 
-            if (gestorConsola.esLargoValido(calle, 0, 50)) {
+            if (GestorConsola.esLargoValido(calle, 0, 50)) {
                 System.out.println("La calle debe tener menos de 50 (cincuenta) caracteres");
                 valido = false;
             }
@@ -49,15 +48,15 @@ public class GestorDirecciones {
     }
 
     public int leerNumero() {
-        int numero = 0;
-        boolean valido = false;
+        int numero;
+        boolean valido;
 
         do {
             System.out.println("Ingrese el numero: ");
             numero = scanner.nextInt();
             valido = true;
 
-            if (gestorConsola.perteneceAlRango(numero, 0 , 10000)) {
+            if (GestorConsola.perteneceAlRango(numero, 0 , 10000)) {
                 System.out.println("El numero debe estar entre 0 (cero) y 10000 (diez mil)");
                 valido = false;
             }
@@ -68,8 +67,8 @@ public class GestorDirecciones {
     }
 
     public String leerLocalidad() {
-        String localidad = "";
-        boolean valido = false;
+        String localidad;
+        boolean valido;
 
         do {
             System.out.println("Ingrese el nombre de la localidad: ");
@@ -77,17 +76,17 @@ public class GestorDirecciones {
             scanner.nextLine();
             valido = true;
 
-            if (gestorConsola.estaVacio(localidad)) {
+            if (GestorConsola.estaVacio(localidad)) {
                 System.out.println("La calle no puede estar vacia");
                 valido = false;
             }
 
-            if (gestorConsola.contieneCaracteresNoValidos(localidad)) {
+            if (GestorConsola.contieneCaracteresNoValidos(localidad)) {
                 System.out.println("La calle solo puede contener letras o numeros");
                 valido = false;
             }
 
-            if (gestorConsola.esLargoValido(localidad, 0, 50)) {
+            if (GestorConsola.esLargoValido(localidad, 0, 50)) {
                 System.out.println("La localidad debe tener menos de 50 (cincuenta) caracteres");
                 valido = false;
             }

@@ -1,6 +1,7 @@
 package Menu;
 
 import Excepciones.DniInexistenteException;
+import Gestores.Funcionales.GestorConsola;
 import Gestores.Personas.GestorClientes;
 import Gestores.Personas.GestorUser;
 import Modelos.Personas.Cliente;
@@ -9,8 +10,6 @@ import java.util.Scanner;
 
 public class MenuClientes {
 
-    private int opcion;
-
     public void crearCliente(GestorClientes gestorClientes, GestorUser gestorUser) {
         Cliente nuevoCliente = gestorClientes.cargarNuevoCliente();
         gestorClientes.agregarNuevoCliente(nuevoCliente);
@@ -18,7 +17,6 @@ public class MenuClientes {
 
         boolean usuarioCreado = false;
         do {
-            // Crear un usuario automáticamente para el cliente
             System.out.println("Ahora debe crear un usuario para este cliente.");
 
             String username = gestorUser.capturarUsername();
@@ -71,39 +69,46 @@ public class MenuClientes {
 
     public void menuClientes(GestorClientes gestorClientes, GestorUser gestorUser, Scanner scanner) {
         boolean regresar = false;
-        int opcion = -1;
+        int opcion;
 
         while (!regresar) {
             do {
-                System.out.println("\n--- GESTIÓN DE CLIENTES ---");
-                System.out.println("1. Crear Cliente");
-                System.out.println("2. Listar Clientes");
-                System.out.println("3. Buscar Cliente por DNI");
-                System.out.println("4. Eliminar Cliente");
-                System.out.println("5. Modificar Cliente");
-
-                System.out.println("0. Regresar");
-                System.out.print("Seleccione una opción: ");
+                System.out.print("""
+                        --- GESTIÓN DE CLIENTES ---
+                        
+                        [1] Crear cliente
+                        [2] Eliminar cliente
+                        [3] Modificar cliente
+                        
+                        Buscar clientes
+                        [2] Por DNI
+                        [3] Ver todos
+                        
+                        [0] Volver
+                        
+                        Seleccione una opcion:
+                        
+                        """);
 
                 opcion = scanner.nextInt();
                 scanner.nextLine();
-            } while (opcion < 0 || opcion > 4);
+            } while (GestorConsola.perteneceAlRango(opcion, 0, 5));
 
             switch (opcion) {
                 case 1:
                     crearCliente(gestorClientes, gestorUser);
                     break;
                 case 2:
-                    gestorClientes.listarClientes();
-                    break;
-                case 3:
-                    buscarCliente(gestorClientes);
-                    break;
-                case 4:
                     eliminarCliente(gestorClientes);
                     break;
-                case 5:
+                case 3:
                     modificarCliente(gestorClientes);
+                    break;
+                case 4:
+                    buscarCliente(gestorClientes);
+                    break;
+                case 5:
+                    gestorClientes.listarClientes();
                 case 0:
                     regresar = true;
                     break;

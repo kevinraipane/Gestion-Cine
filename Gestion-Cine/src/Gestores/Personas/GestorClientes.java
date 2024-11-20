@@ -6,7 +6,6 @@ import Gestores.Funcionales.GestorConsola;
 //import Modelos.Cine.Entrada;
 import Modelos.Personas.Cliente;
 import Modelos.Personas.Direccion;
-import Modelos.Personas.Empleado;
 import Modelos.Personas.TarjetaBanco;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,7 +26,6 @@ public class GestorClientes {
     int lastId = 0;
 
     GestorPersonas gestorPersonas = new GestorPersonas();
-    GestorConsola gestorConsola = new GestorConsola();
     Scanner scanner = new Scanner(System.in);
 
     HashMap<String, Cliente> clientes;
@@ -102,7 +100,7 @@ public class GestorClientes {
 
     /// MODIFICAR CLIENTE --------------------------------------------------------------------------------
     public Cliente modificarCliente(String dni) {
-        byte opcion = 0;
+        byte opcion;
         Cliente cliente = null;
 
         try {
@@ -126,18 +124,22 @@ public class GestorClientes {
         switch (opcion) {
             case 1:
                 String nombre = gestorPersonas.leerNombre();
+                assert cliente != null : "El cliente no puede ser nulo";
                 cliente.setNombre(nombre);
                 break;
             case 2:
                 String apellido = gestorPersonas.leerApellido();
+                assert cliente != null : "El cliente no puede ser nulo";
                 cliente.setApellido(apellido);
                 break;
             case 3:
                 LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
+                assert cliente != null : "El cliente no puede ser nulo";
                 cliente.setFechaNacimiento(fechaNacimiento);
                 break;
             case 4:
                 String email = gestorPersonas.leerEmail();
+                assert cliente != null : "El cliente no puede ser nulo";
                 cliente.setEmail(email);
                 break;
             case 5:
@@ -152,8 +154,7 @@ public class GestorClientes {
 
     public void reemplazarCliente(String dni, Cliente clienteModificado) {
         try {
-            Cliente clienteActual = buscarClientePorDNI(dni);
-            clienteActual = clienteModificado;
+            clientes.replace(dni, clienteModificado);
             System.out.println("Cliente modificado con exito");
 
             guardarClientes();
@@ -248,31 +249,31 @@ public class GestorClientes {
     /// -----------------------------------------------------------------------------------------------
     /// VALIDACIONES
 
-    private boolean dniExiste(String dni) throws DniExistenteException {
+    private void dniExiste(String dni) throws DniExistenteException {
 
         if (!clientes.containsKey(dni)) {
-            return true;
+            return;
         }
 
         throw new DniExistenteException(dni);
     }
 
     public String leerDniCliente() {
-        String dni = "";
-        boolean valido = false;
+        String dni;
+        boolean valido;
 
         do {
             System.out.println("Ingrese el dni:");
             dni = scanner.nextLine().trim();
             valido = true;
 
-            if (!gestorConsola.esLargoValido(dni, 7, 8)) {
+            if (!GestorConsola.esLargoValido(dni, 7, 8)) {
                 System.out.println("El dni debe contener entre 7 (siete) y 8 (ocho) caracteres");
                 valido = false;
             }
 
             try {
-                gestorConsola.contieneSoloNumeros(dni);
+                GestorConsola.contieneSoloNumeros(dni);
             } catch (NumberFormatException e) {
                 System.out.println("El dni solo puede contener numeros");
                 valido = false;
