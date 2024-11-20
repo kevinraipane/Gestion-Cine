@@ -60,7 +60,7 @@ public class GestorUser {
 
     /// MODIFICAR USUARIO ----------------------------------------------------------------------
 
-    public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstado) throws UserNoEncontradoException {
+    public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstado) {
         User usuario = null;
 
         try {

@@ -1,5 +1,6 @@
 package Menu;
 
+import Excepciones.DniInexistenteException;
 import Gestores.Personas.GestorEmpleados;
 import Gestores.Personas.GestorUser;
 import Modelos.Personas.Empleado;
@@ -9,18 +10,18 @@ import java.util.Scanner;
 
 public class MenuEmpleados {
 
-    public void crearEmpleado(GestorEmpleados gestorEmpleados, Scanner scanner, GestorUser gestorUser) {
+    public void crearEmpleado(GestorEmpleados gestorEmpleados, GestorUser gestorUser) {
         Empleado nuevoEmpleado = gestorEmpleados.cargarNuevoEmpleado();
         gestorEmpleados.agregarNuevoEmpleado(nuevoEmpleado);
         System.out.println("Empleado creado: " + nuevoEmpleado);
 
         boolean usuarioCreado = false;
         do{
-            System.out.println("Ahora debe crear un usuario para este cliente.");
+            System.out.println("Ahora debe crear un usuario para este empleado.");
             System.out.print("Ingrese el nombre de usuario: ");
-            String username = scanner.nextLine();
+            String username = gestorUser.capturarUsername();
             System.out.print("Ingrese la contraseña: ");
-            String password = scanner.nextLine();
+            String password = gestorUser.capturarPassword();
 
             try {
                 gestorUser.crearUsuario(username, password);
@@ -33,12 +34,13 @@ public class MenuEmpleados {
         } while (!usuarioCreado);
     }
 
-    public void buscarEmpleado(Scanner scanner, GestorEmpleados gestorEmpleados) {
+    public void buscarEmpleado(GestorEmpleados gestorEmpleados) {
         System.out.print("Ingrese el DNI del empleado: ");
-        String dni = scanner.nextLine();
+        String dni = gestorEmpleados.leerDniEmpleado();
+
         try {
             System.out.println(gestorEmpleados.buscarEmpleadoPorDNI(dni));
-        } catch (Exception e) {
+        } catch (DniInexistenteException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
@@ -46,11 +48,23 @@ public class MenuEmpleados {
     public void eliminarEmpleado(GestorEmpleados gestorEmpleados) {
         System.out.print("Ingrese el DNI del empleado a eliminar: ");
         String dni = gestorEmpleados.leerDniEmpleado();
+
         try {
             gestorEmpleados.bajaEmpleado(dni);
             System.out.println("Empleado eliminado.");
-        } catch (Exception e) {
+        } catch (DniInexistenteException e) {
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void modificarEmpleado(GestorEmpleados gestorEmpleados) {
+        try {
+            String dni = gestorEmpleados.leerDniEmpleado();
+            Empleado empleadoModificado = gestorEmpleados.modificarEmpleado(dni);
+            gestorEmpleados.reemplazarEmpleado(dni, empleadoModificado);
+
+        } catch (DniInexistenteException e) {
+            System.err.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -63,8 +77,7 @@ public class MenuEmpleados {
             System.out.println("2. Listar Empleados");
             System.out.println("3. Buscar Empleado por DNI");
             System.out.println("4. Eliminar Empleado");
-            //FALTA METODO PARA CAMBIAR CARGO
-            //FALTA METODO PARA CAMBIAR ESTADO DEL EMPLEADO
+            System.out.println("5. Modificar datos de Empleado");
             System.out.println("0. Regresar");
             System.out.print("Seleccione una opción: ");
             int opcion = scanner.nextInt();
@@ -72,16 +85,19 @@ public class MenuEmpleados {
 
             switch (opcion) {
                 case 1:
-                    crearEmpleado(gestorEmpleados, scanner, gestorUser);
+                    crearEmpleado(gestorEmpleados, gestorUser);
                     break;
                 case 2:
                     gestorEmpleados.listarEmpleados();
                     break;
                 case 3:
-                    buscarEmpleado(scanner, gestorEmpleados);
+                    buscarEmpleado(gestorEmpleados);
                     break;
                 case 4:
                     eliminarEmpleado(gestorEmpleados);
+                    break;
+                case 5:
+                    modificarEmpleado(gestorEmpleados);
                     break;
                 case 0:
                     regresar = true;

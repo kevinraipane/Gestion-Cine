@@ -49,7 +49,7 @@ public class GestorEmpleados {
         System.out.println("Cargo del empleado");
         CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
 
-        return new Empleado(idUsuario,nombre, apellido, dni, email, fechaNacimiento, cargo);
+        return new Empleado(idUsuario, nombre, apellido, dni, email, fechaNacimiento, cargo);
     }
 
     /// AGREGAR ADMIN POR DEFECTO ----------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ public class GestorEmpleados {
         }
     }
 
-    /// ELIMINAR EMPLEADO ---------------------------------------------------------------------------------------------
+    /// ESTADO EMPLEADO ---------------------------------------------------------------------------------------------
 
     public void bajaEmpleado(String dni) throws DniInexistenteException {
         if (empleados.containsKey(dni)) {
@@ -108,9 +108,26 @@ public class GestorEmpleados {
                             "No puede ser dado de baja.");
                 }
 
+            } else {
+                System.out.println("El empleado ya esta dado de baja");
             }
         } else {
             throw new DniInexistenteException(dni);
+        }
+    }
+
+    public void altaEmpleado(String dni) throws DniInexistenteException {
+        try {
+            Empleado empleado = buscarEmpleadoPorDNI(dni);
+
+            if (empleado.dadoDeBaja()) {
+                empleado.darDeAlta();
+            } else {
+                System.out.println("El empleado no esta dado de baja");
+            }
+
+        } catch (DniInexistenteException e) {
+            System.err.println("ERROR: " + e.getMessage());
         }
     }
 
@@ -163,7 +180,8 @@ public class GestorEmpleados {
                         "[3] Fecha de Nacimiento" +
                         "[4] Email" +
                         "[5] Cargo" +
-                        "[6] Modificar todos los campos" +
+                        "[6] Estado" +
+                        "[7] Modificar todos los campos" +
                         "[0] Salir");
 
                 opcion = scanner.nextByte();
@@ -172,7 +190,7 @@ public class GestorEmpleados {
                     System.out.println("Opcion invalida, intente nuevamente");
                 }
 
-            } while (opcion > 6 || opcion < 0);
+            } while (opcion > 7 || opcion < 0);
 
             int modificar;
             do {
@@ -196,28 +214,60 @@ public class GestorEmpleados {
 
         switch (opcion) {
             case 1:
-                String nombre = gestorPersonas.leerNombre();
-                empleado.setNombre(nombre);
+                empleado.setNombre(gestorPersonas.leerNombre());
                 break;
+
             case 2:
-                String apellido = gestorPersonas.leerApellido();
-                empleado.setApellido(apellido);
+                empleado.setApellido(gestorPersonas.leerApellido());
                 break;
+
             case 3:
-                LocalDate fechaNacimiento = gestorPersonas.leerFechaNacimiento();
-                empleado.setFechaNacimiento(fechaNacimiento);
+                empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
                 break;
+
             case 4:
-                String email = gestorPersonas.leerEmail();
-                empleado.setEmail(email);
+                empleado.setEmail(gestorPersonas.leerEmail());
                 break;
+
             case 5:
                 System.out.println("Cargo del empleado");
                 CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
                 empleado.setCargo(cargo);
                 break;
+
+            case 7:
+                empleado.setNombre(gestorPersonas.leerNombre());
+                empleado.setApellido(gestorPersonas.leerApellido());
+                empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
+                empleado.setEmail(gestorPersonas.leerEmail());
+                System.out.println("Cargo del empleado");
+                cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                empleado.setCargo(cargo);
+
+                break;
+
             case 6:
-                empleado = cargarNuevoEmpleado();
+                byte flag = -1;
+
+                do {
+                    if (empleado.estaActivo()) {
+                        System.out.println("Desea dar de BAJA el empleado?");
+                    } else if (empleado.dadoDeBaja()) {
+                        System.out.println("Desea dar de ALTA el empleado?");
+                    }
+
+                    System.out.println("[1] SI");
+                    System.out.println("[2] NO");
+
+                    flag = scanner.nextByte();
+                } while (flag != 1 && flag != 2);
+
+                if (empleado.estaActivo() && flag == 1) {
+                    bajaEmpleado(empleado.getDni());
+                } else if (empleado.dadoDeBaja() && flag == 1) {
+                    altaEmpleado(empleado.getDni());
+                }
+
                 break;
             case 0: // salir
         }
@@ -230,6 +280,8 @@ public class GestorEmpleados {
             Empleado empleadoActual = buscarEmpleadoPorDNI(dni);
             empleadoActual = empleadoModificado;
             System.out.println("Empleado modificado con exito");
+
+            guardarEmpleados();
 
         } catch (DniInexistenteException e) {
             System.err.println("ERROR: " + e.getMessage());

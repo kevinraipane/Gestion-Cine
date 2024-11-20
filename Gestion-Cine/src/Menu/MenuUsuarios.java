@@ -28,6 +28,7 @@ public class MenuUsuarios {
         System.out.print("Ingrese el ID del usuario: ");
         int id = scanner.nextInt();
         scanner.nextLine();
+
         try {
             System.out.println(gestorUser.buscarPorId(id));
         } catch (Exception e) {

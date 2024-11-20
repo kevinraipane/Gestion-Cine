@@ -1,5 +1,6 @@
 package Menu;
 
+import Excepciones.DniInexistenteException;
 import Gestores.Personas.GestorClientes;
 import Gestores.Personas.GestorUser;
 import Modelos.Personas.Cliente;
@@ -10,24 +11,24 @@ public class MenuClientes {
 
     private int opcion;
 
-    public void crearCliente(GestorClientes gestorClientes, GestorUser gestorUser, Scanner scanner) {
+    public void crearCliente(GestorClientes gestorClientes, GestorUser gestorUser) {
         Cliente nuevoCliente = gestorClientes.cargarNuevoCliente();
         gestorClientes.agregarNuevoCliente(nuevoCliente);
         System.out.println("Cliente creado: " + nuevoCliente);
 
         boolean usuarioCreado = false;
-        do{
+        do {
             // Crear un usuario automáticamente para el cliente
             System.out.println("Ahora debe crear un usuario para este cliente.");
-            System.out.print("Ingrese el nombre de usuario: ");
-            String username = scanner.nextLine();
-            System.out.print("Ingrese la contraseña: ");
-            String password = scanner.nextLine();
+
+            String username = gestorUser.capturarUsername();
+            String password = gestorUser.capturarPassword();
 
             try {
                 gestorUser.crearUsuario(username, password);
                 System.out.println("Usuario creado exitosamente para el cliente.");
                 usuarioCreado = true;
+
             } catch (Exception e) {
                 System.out.println("Error al crear el usuario: " + e.getMessage());
                 System.out.println("Intentelo nuevamente.");
@@ -36,45 +37,61 @@ public class MenuClientes {
     }
 
     public void buscarCliente(GestorClientes gestorClientes) {
-        System.out.print("Ingrese el DNI del cliente: ");
-        String dni = gestorClientes.leerDniCliente();
         try {
+            String dni = gestorClientes.leerDniCliente();
             System.out.println(gestorClientes.buscarClientePorDNI(dni));
-        } catch (Exception e) {
+
+        } catch (DniInexistenteException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
 
-    public void eliminarCliente(Scanner scanner, GestorClientes gestorClientes) {
-        System.out.print("Ingrese el DNI del cliente a eliminar: ");
+    public void eliminarCliente(GestorClientes gestorClientes) {
         String dni = gestorClientes.leerDniCliente();
 
         try {
             gestorClientes.eliminarCliente(dni);
             System.out.println("Cliente eliminado.");
 
-        } catch (Exception e) {
+        } catch (DniInexistenteException e) {
             System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public void modificarCliente(GestorClientes gestorClientes) {
+        try {
+            String dni = gestorClientes.leerDniCliente();
+            Cliente clienteModificado = gestorClientes.modificarCliente(dni);
+            gestorClientes.reemplazarCliente(dni, clienteModificado);
+
+        } catch (DniInexistenteException e) {
+            System.err.println("ERROR: " + e.getMessage());
         }
     }
 
     public void menuClientes(GestorClientes gestorClientes, GestorUser gestorUser, Scanner scanner) {
         boolean regresar = false;
+        int opcion = -1;
 
         while (!regresar) {
-            System.out.println("\n--- GESTIÓN DE CLIENTES ---");
-            System.out.println("1. Crear Cliente");
-            System.out.println("2. Listar Clientes");
-            System.out.println("3. Buscar Cliente por DNI");
-            System.out.println("4. Eliminar Cliente");
-            System.out.println("0. Regresar");
-            System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
+            do {
+                System.out.println("\n--- GESTIÓN DE CLIENTES ---");
+                System.out.println("1. Crear Cliente");
+                System.out.println("2. Listar Clientes");
+                System.out.println("3. Buscar Cliente por DNI");
+                System.out.println("4. Eliminar Cliente");
+                System.out.println("5. Modificar Cliente");
+
+                System.out.println("0. Regresar");
+                System.out.print("Seleccione una opción: ");
+
+                opcion = scanner.nextInt();
+                scanner.nextLine();
+            } while (opcion < 0 || opcion > 4);
 
             switch (opcion) {
                 case 1:
-                    crearCliente(gestorClientes, gestorUser, scanner);
+                    crearCliente(gestorClientes, gestorUser);
                     break;
                 case 2:
                     gestorClientes.listarClientes();
@@ -83,9 +100,10 @@ public class MenuClientes {
                     buscarCliente(gestorClientes);
                     break;
                 case 4:
-                    eliminarCliente(scanner, gestorClientes);
+                    eliminarCliente(gestorClientes);
                     break;
-
+                case 5:
+                    modificarCliente(gestorClientes);
                 case 0:
                     regresar = true;
                     break;
