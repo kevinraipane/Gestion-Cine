@@ -28,7 +28,7 @@ public class Butaca{
     //Claro; si usara numero de butaca como identificador, si yo recorro cada sala buscando las butacas
     //donde coincida el dni de la persona y retorno la butaca, podría tener numeros repetidos de buta-
     //cas de diferentes salas, además, ¿con sólo un número de butaca como sé las butacas de qué salas
-    //reservó? Si hago por id, después puedo traerme toda la info de esa butaca y saber dónde pertenece.
+    //reservó? Si hago por idPelicula, después puedo traerme toda la info de esa butaca y saber dónde pertenece.
 
     public static int contador = 0;
     private int numero;

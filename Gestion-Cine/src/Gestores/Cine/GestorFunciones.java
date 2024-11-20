@@ -173,7 +173,7 @@ public class GestorFunciones {
 
     // Rehabilitar función (te debería obligar siempre a seleccionar día y hora, supongo,
     // para evitar errores, así que: ¿los cases, para rehabilitar y reprogramar, podrían compartir
-    // llamada al mismo método? Sólo que "reprogramar" puede darse en más estados de la función (en sold out y disponible) que
+    // llamada al mismo metodo? Sólo que "reprogramar" puede darse en más estados de la función (en sold out y disponible) que
     // "rehabilitar", que sólo se permite cuando una sala esté dada de baja.)
 
 
@@ -326,6 +326,16 @@ public class GestorFunciones {
     ///
     /// --------- ¡ FALTARÍA FILTRAR FUNCIONES POR DIA ! --------- ///
     ///
+    /// public void listarHorarios(Scanner entrada){
+    ///         System.out.println("Seleccione el dia a mostrar:");
+    ///         DiasSemana dia = new GestorEnums<>(DiasSemana.class).seleccionarElemento(entrada);
+    ///         int contador = 0;
+    ///         for (Horario horario : horariosSemana.get(dia)){
+    ///             ++contador;
+    ///             System.out.println("Funcion " + contador + ": " + horario);
+    ///         }
+    ///     }
+    ///
     ///
     ///
 
@@ -339,7 +349,7 @@ public class GestorFunciones {
 
     public List<Funcion> filtrarFuncionesPorPelicula(int idPelicula) throws ColeccionInvalidaException, ColeccionVaciaException {
 
-        List<Funcion> funcionesCoincidentes = funcionesCrud.buscarPorAtributoEnValores(funcion -> funcion.getPelicula().getPeliculaId() == idPelicula);
+        List<Funcion> funcionesCoincidentes = funcionesCrud.buscarPorAtributoEnValores(funcion -> funcion.getPelicula().getIdPelicula() == idPelicula);
 
         return funcionesCoincidentes;
 
@@ -358,7 +368,7 @@ public class GestorFunciones {
     /// Búsquedas:
 
 
-    // Retornar y mostrar 1 función, buscado por id:
+    // Retornar y mostrar 1 función, buscado por idPelicula:
 
     public Funcion retornarFuncionPorId(int id) throws ColeccionInvalidaException, ColeccionVaciaException, ElementoNoEncontradoException {
 
@@ -550,10 +560,10 @@ public class GestorFunciones {
     }
 
 
-    // Retornar y mostrar 1 butaca dentro de todas las funciones, buscada por id:
+    // Retornar y mostrar 1 butaca dentro de todas las funciones, buscada por idPelicula:
 
 
-    // Retornar y mostrar 1 butaca dentro de una funcion, buscada por numero de butaca e id de funcion:
+    // Retornar y mostrar 1 butaca dentro de una funcion, buscada por numero de butaca e idPelicula de funcion:
 
 
     // Retornar y mostrar todas las butacas liberadas de una función:
@@ -583,7 +593,7 @@ public class GestorFunciones {
     // Retornar y mostrar todas las películas pertenecientes a determinado día:
 
 
-    // Retornar y mostrar todas las funciones, en las que se pase tal película (buscada por id o título):
+    // Retornar y mostrar todas las funciones, en las que se pase tal película (buscada por idPelicula o título):
 
 
     // Retornar y mostrar todas las funciones, en las que se pase una película en tal idioma:

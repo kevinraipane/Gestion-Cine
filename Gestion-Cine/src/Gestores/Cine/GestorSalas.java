@@ -399,7 +399,7 @@ public class GestorSalas {
 
     // Métodos de listar/mostrar::
 
-    // Buscar por id y mostrar 1 elemento entre todas las salas:
+    // Buscar por idPelicula y mostrar 1 elemento entre todas las salas:
 
     public Sala retornarSalaPorId(int id) throws ColeccionInvalidaException, ColeccionVaciaException, ElementoNoEncontradoException {
 

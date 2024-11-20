@@ -5,18 +5,16 @@ import Excepciones.NumeroFueraDelRangoException;
 import Excepciones.SeleccionInvalidaException;
 import Excepciones.SoloNumerosException;
 import Excepciones.StringEnBlancoException;
-import Gestores.GestorDatos;
-import Gestores.GestorEnums;
-import Gestores.GestorPelicula;
+import Gestores.Funcionales.GestorDatos;
+import Gestores.Funcionales.GestorEnums;
 
 import java.time.Duration;
-import java.time.Year;
 import java.util.Scanner;
 
 public class Pelicula{
     //Atributos
     public static int contador = 0;
-    public int id;
+    public int idPelicula;
     private String titulo;
     private Idioma idioma;
     private Idioma idiomaSubtitulos;
@@ -33,7 +31,7 @@ public class Pelicula{
     public Pelicula(String titulo,Idioma idioma,Idioma idiomaSubtitulos,Duration duracion, String productor,
                     String director,int añoLanzamiento,Paises pais,ClasificacionEdad clasificacionEdad,
                     GeneroPelicula generoPelicula, EstadoPelicula estadoPelicula){
-        this.id = ++contador;
+        this.idPelicula = ++contador;
         this.titulo = titulo;
         this.idioma = idioma;
         this.idiomaSubtitulos = idiomaSubtitulos;
@@ -49,152 +47,13 @@ public class Pelicula{
 
     //------------------------------------------Constructor que no recibe parametros-------------------------------------
     public Pelicula(){
-        Scanner entrada = new Scanner(System.in);
-        int datosValidos = 0;
-        this.id = ++contador;
-
-        while(datosValidos==0){ //Ingresar el titulo
-            try{
-                System.out.println("Ingrese el titulo de la película\n");
-                setTitulo(new GestorDatos().ingresarTexto(entrada));
-                datosValidos++;
-            }catch (StringEnBlancoException e){
-                System.out.println(e.getMessage());
-            }
-        }
-
-        while(datosValidos==1){ //Seleccionar el idioma
-            try{
-                System.out.println("Seleccione el idioma de la pelicula: ");
-                this.setIdioma(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==2){ //Seleccionar el idioma de los subtitulos
-            try{
-                System.out.println("\nSeleccione el idioma de los subtitulos: ");
-                this.setIdiomaSubtitulos(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==3){ //Ingresar la duracion
-            try{
-                this.setDuracion(new GestorDatos().ingresarDuracion(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        entrada.nextLine(); //Consume el salto de línea que sobra, sino se saltea el ingreso del nombre en la proxima funcion
-
-        while(datosValidos==4){ //Ingresar el productor
-            try{
-                System.out.println("Productor:");
-                this.setProductor(new GestorDatos().ingresarNombreCompleto(entrada));
-                datosValidos++;
-            }catch (StringEnBlancoException e){
-                System.out.println(e.getMessage());
-            }
-        }
-
-        while(datosValidos==5){ //Ingresar el director
-            try{
-                System.out.println("Director:");
-                this.setDirector(new GestorDatos().ingresarNombreCompleto(entrada));
-                datosValidos++;
-            }catch (StringEnBlancoException e){
-                System.out.println(e.getMessage());
-            }
-        }
-
-        while(datosValidos==6){ //Ingresar el año
-            try{
-                this.setAñoLanzamiento(new GestorDatos().ingresarAño(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==7){ //Ingresar el pais
-            try{
-                System.out.println("Seleccione el pais de origen:\n");
-                this.setPais(new GestorEnums<>(Paises.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==8){ //Ingresar la clasificacion por Edad
-            try{
-                System.out.println("Seleccione la clasificacion por edad:\n");
-                this.setClasificacionEdad(new GestorEnums<>(ClasificacionEdad.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==9){ //Ingresar el generoPelicula
-            try{
-                System.out.println("Seleccione el genero de la pelicula:\n");
-                this.setGeneroPelicula(new GestorEnums<>(GeneroPelicula.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        while(datosValidos==10){ //Ingresar el EstadoPelicula
-            try{
-                System.out.println("Seleccione el estado de la pelicula:\n");
-                this.setEstadoPelicula(new GestorEnums<>(EstadoPelicula.class).seleccionarElemento(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException e){
-                System.out.println(e.getMessage());
-            }catch (SoloNumerosException e){
-                System.out.println(e.getMessage());
-                entrada.nextLine(); //Es necesario poque sino el buffer nunca se actualiza, creando un bucle infinito
-            }
-        }
-
-        System.out.println("Estos son los datos ingresados" + this);
-
+        this.idPelicula = ++contador;
     }
 
     //-----------------------Constructor que recibe solo título (para pruebas de coleccion)---------------------------
 
     public Pelicula(String titulo){
-        this.id = ++contador;
+        this.idPelicula = ++contador;
         this.titulo = titulo;
         this.idioma = Idioma.INGLES;
         this.idiomaSubtitulos = Idioma.ESPAÑOL;
@@ -208,182 +67,11 @@ public class Pelicula{
         this.estadoPelicula = EstadoPelicula.EN_CARTELERA;
     }
 
-    public void modificarPelicula(Scanner entrada) {
-        int opcion = 0;
-        boolean salirBucle = true;
-        boolean salirSwitch = true;
-        GestorDatos datos = new GestorDatos();
-        System.out.println("Estos son los datos actuales de la película:\n" + this);
-        while (salirSwitch) {
-            System.out.println("\nSeleccione el dato a modificar:\n" + menuDatos());
-            try {
-                opcion = datos.ingresarNumero(entrada, 11);
-                if (opcion >= 1 && opcion <= 11) {
-                    switch (opcion) {
-                        case 1://Modificar el titulo
-                            do {
-                                try {
-                                    System.out.println("Ingrese el título nuevo:");
-                                    this.setTitulo(datos.ingresarTexto(entrada));
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 2: //Cambiar idioma
-                            do {
-                                try {
-                                    System.out.println("Seleccione el nuevo idioma:");
-                                    this.setIdioma(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 3: //Cambiar idioma de subtitulos
-                            do {
-                                try {
-                                    System.out.println("Seleccione el nuevo idioma de subtitulos:");
-                                    this.setIdiomaSubtitulos(new GestorEnums<>(Idioma.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 4: //Cambiar duracion
-                            do {
-                                try {
-                                    this.setDuracion(datos.ingresarDuracion(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 5: //Cambiar Productor
-                            do {
-                                try {
-                                    System.out.println("Productor:");
-                                    this.setProductor(datos.ingresarNombreCompleto(entrada));
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 6: //Cambiar Director
-                            do {
-                                try {
-                                    System.out.println("Director:");
-                                    this.setDirector(datos.ingresarNombreCompleto(entrada));
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 7: //Cambiar año
-                            do {
-                                try {
-                                    this.setAñoLanzamiento(datos.ingresarAño(entrada));
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 8: //Cambiar pais de origen
-                            do {
-                                try {
-                                    this.setPais(new GestorEnums<>(Paises.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 9: //Cambiar clasificacion
-                            do {
-                                try {
-                                    this.setClasificacionEdad(new GestorEnums<>(ClasificacionEdad.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 10: //Cambiar clasificacion
-                            do {
-                                try {
-                                    this.setGeneroPelicula(new GestorEnums<>(GeneroPelicula.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                        case 11: //Cambiar clasificacion
-                            do {
-                                try {
-                                    this.setEstadoPelicula(new GestorEnums<>(EstadoPelicula.class).seleccionarElemento(entrada));
-                                    entrada.nextLine();
-                                    salirBucle = false;
-                                } catch (StringEnBlancoException e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            } while (salirBucle);
-                            System.out.println("Estos son los datos de la película:\n" + this + "\n¿Desea continuar modificando?");
-                            salirSwitch = datos.confirmacion(entrada);
-                            break;
-                    }
-                }
-            } catch (NumeroFueraDelRangoException e) {
-                throw new RuntimeException(e);
-            } catch (SoloNumerosException e) {
-                throw new RuntimeException(e);
-            } catch (StringEnBlancoException e) {
-                throw new RuntimeException(e);
-            } catch (SeleccionInvalidaException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     //-----------------------------------------------------Metodos que printean-----------------------------------------
     @Override
     public String toString() {
-
-        return
-                "\nID: " + id +
+        return  "---------------------------------------------------------------" +
+                "\nID: " + idPelicula +
                 "\nTitulo: " + titulo +
                 "\nIdioma: " + new GestorEnums<>(Idioma.class).formatearEnum(idioma)   +
                 "\nSubtitulos: " + new GestorEnums<>(Idioma.class).formatearEnum(idiomaSubtitulos)   +
@@ -399,7 +87,6 @@ public class Pelicula{
 
     public String fichaTecnicaResumen() {
         return "---------------------------------------------------------------" +
-                "\nID: " + id +
                 "\nTitulo: " + titulo +
                 "\nIdioma: " + new GestorEnums<>(Idioma.class).formatearEnum(idioma)   +
                 "\nSubtitulos: " + new GestorEnums<>(Idioma.class).formatearEnum(idiomaSubtitulos)   +
@@ -427,8 +114,8 @@ public class Pelicula{
 
     //-----------------------------------------------------Getters y Setters--------------------------------------------
 
-    public int getId() {
-        return id;
+    public int getIdPelicula() {
+        return idPelicula;
     }
 
     public String getTitulo() {

@@ -1,65 +1,29 @@
 package Modelos.Cine;
 
 import Enumeraciones.*;
-import Excepciones.NumeroFueraDelRangoException;
-import Excepciones.SoloNumerosException;
-import Excepciones.StringEnBlancoException;
-import Gestores.GestorDatos;
-import Gestores.GestorEnums;
-import Gestores.GestorPelicula;
-
+import Gestores.Cine.GestorPelicula;
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
 
 public class Horario {
     //Atributos
     private int idHorario;
     private static int contadorId = 0;
-    private Pelicula pelicula;
     private Duration limpieza = Duration.ofMinutes(30);
     private LocalTime horaInicio;
     private LocalTime horaFin;
-    private DiasSemana dia;
-    private GestorPelicula listaPeliculas = new GestorPelicula();
 
     //Constructor
-    public Horario(LocalTime horaInicio, Duration duracionPelicula, DiasSemana dia){
+    public Horario(LocalTime horaInicio, Duration duracionPelicula){
         this.idHorario = contadorId++;
         this.horaInicio = horaInicio;
-        this.horaFin = horaInicio.plus(pelicula.getDuracion()).plus(limpieza);
-        this.dia = dia;
+        this.horaFin = horaInicio.plus(duracionPelicula.plus(limpieza));
     }
-/*
-    public Horario(){
-        Scanner entrada = new Scanner(System.in);
-        int datosValidos = 0;
-        this.idHorario = ++contadorId;
-        listaPeliculas.inicializarLista(); //Igual lo ideal sería traiga esto desde un JSON
-
-        while(datosValidos==0){ //Ingresar el titulo
-            try{
-                System.out.println("Seleccione la película a proyectar:\n");
-                listaPeliculas.listarCartelera();
-                setPelicula(listaPeliculas.buscarID(entrada));
-                datosValidos++;
-            }catch (NumeroFueraDelRangoException | SoloNumerosException e){
-                System.out.println(e.getMessage());
-            }
-        this.horaInicio
-        }
-
-        System.out.println("Estos son los datos ingresados" + this);
-
-    }
-*/
 
     @Override
     public String toString() {
         return "Horario ID" + idHorario + ":" +
-                "\nDía: " + dia +
+                "\nDía: " +
                 "\nHora de inicio: " + horaInicio +
                 "\nHora de finalización: " + horaFin;
     }
@@ -70,14 +34,6 @@ public class Horario {
 
     public int getIdHorario() {
         return idHorario;
-    }
-
-    public Pelicula getPelicula() {
-        return pelicula;
-    }
-
-    public void setPelicula(Pelicula pelicula) {
-        this.pelicula = pelicula;
     }
 
     public Duration getLimpieza() {
@@ -100,11 +56,4 @@ public class Horario {
         this.horaFin = horaFin;
     }
 
-    public DiasSemana getDia() {
-        return dia;
-    }
-
-    public void setDia(DiasSemana dia) {
-        this.dia = dia;
-    }
 }

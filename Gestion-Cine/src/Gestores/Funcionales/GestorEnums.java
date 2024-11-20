@@ -1,6 +1,5 @@
-package Gestores;
+package Gestores.Funcionales;
 
-import Enumeraciones.Idioma;
 import Excepciones.NumeroFueraDelRangoException;
 import Excepciones.SoloNumerosException;
 

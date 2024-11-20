@@ -1,4 +1,4 @@
-package Gestores;
+package Gestores.Funcionales;
 
 import Enumeraciones.Idioma;
 import Excepciones.NumeroFueraDelRangoException;
@@ -52,9 +52,8 @@ public class GestorDatos {
         return null;
     }
 
-    public boolean confirmacion(Scanner entrada) throws StringEnBlancoException, SeleccionInvalidaException {
-        //Como se puede usar en varios contextos, el mensaje se debe printear antes
-        System.out.println(" (S/N)");
+    public boolean confirmacion(Scanner entrada, String mensaje) throws StringEnBlancoException, SeleccionInvalidaException {
+        System.out.println(mensaje + " (S/N)");
         String respuesta = entrada.nextLine();
         if (respuesta.equalsIgnoreCase("S")){
             return true;
