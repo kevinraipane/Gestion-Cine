@@ -1,6 +1,7 @@
 package Menu;
 
 import Excepciones.DniInexistenteException;
+import Gestores.Funcionales.GestorConsola;
 import Gestores.Personas.GestorClientes;
 import Gestores.Personas.GestorUser;
 import Modelos.Personas.Cliente;
@@ -9,8 +10,6 @@ import java.util.Scanner;
 
 public class MenuClientes {
 
-    private int opcion;
-
     public void crearCliente(GestorClientes gestorClientes, GestorUser gestorUser) {
         Cliente nuevoCliente = gestorClientes.cargarNuevoCliente();
         gestorClientes.agregarNuevoCliente(nuevoCliente);
@@ -18,7 +17,6 @@ public class MenuClientes {
 
         boolean usuarioCreado = false;
         do {
-            // Crear un usuario automáticamente para el cliente
             System.out.println("Ahora debe crear un usuario para este cliente.");
 
             String username = gestorUser.capturarUsername();
@@ -71,7 +69,7 @@ public class MenuClientes {
 
     public void menuClientes(GestorClientes gestorClientes, GestorUser gestorUser, Scanner scanner) {
         boolean regresar = false;
-        int opcion = -1;
+        int opcion;
 
         while (!regresar) {
             do {
@@ -87,7 +85,7 @@ public class MenuClientes {
 
                 opcion = scanner.nextInt();
                 scanner.nextLine();
-            } while (opcion < 0 || opcion > 4);
+            } while (GestorConsola.perteneceAlRango(opcion, 0, 5));
 
             switch (opcion) {
                 case 1:

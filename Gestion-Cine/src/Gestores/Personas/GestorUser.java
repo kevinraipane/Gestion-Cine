@@ -23,8 +23,6 @@ import java.util.Set;
 public class GestorUser {
     private static final String USUARIOS_FILE_PATH = "usuarios.json";
 
-    GestorConsola gestorConsola = new GestorConsola();
-
     private Set<User> usuarios;
     private int lastId = 0;
 
@@ -110,14 +108,14 @@ public class GestorUser {
 
                 case 3:
                     System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
-                    estadoUsuario = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                    estadoUsuario = GestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
                     break;
 
                 case 4:
                     username = capturarUsername();
                     password = capturarPassword();
                     System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
-                    estadoUsuario = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
+                    estadoUsuario = GestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
                     break;
 
                 default:
@@ -143,7 +141,7 @@ public class GestorUser {
             username = scanner.nextLine();
 
             try {
-                valido = gestorConsola.isValidUsername(username);
+                valido = GestorConsola.isValidUsername(username);
                 if (valido) {
                     System.out.println("Nombre de usuario valido.");
                 }
@@ -166,7 +164,7 @@ public class GestorUser {
             password = scanner.nextLine();
 
             try {
-                valido = gestorConsola.isValidPassword(password);
+                valido = GestorConsola.isValidPassword(password);
                 if (valido) {
                     System.out.println("Contraseña valida.");
                 }
@@ -176,7 +174,7 @@ public class GestorUser {
             }
         }
 
-        return password;
+        return GestorContraseña.encriptadorContraseña(password);
     }
 
 
@@ -213,6 +211,8 @@ public class GestorUser {
 
     public void listarUsuarios()
             throws ColeccionVaciaException {
+        System.out.println("Usuarios cargados en el sistema: ");
+
         if (!usuarios.isEmpty()) {
             for (User u : usuarios) {
                 System.out.println(u);
@@ -265,7 +265,7 @@ public class GestorUser {
         try {
             User usuario = buscarPorUsername(username);
 
-            if (usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))) {
+            if (usuario.getPassword().equals(password)) {
                 if (usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO) {
                     throw new CredencialesInvalidasException("El usuario esta desactivado (Dado de baja).");
                 }

@@ -1,15 +1,17 @@
 package Menu;
 
 
+import Gestores.Funcionales.GestorConsola;
 import Gestores.Personas.*;
 import Modelos.Personas.*;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class MenuMiPerfil {
 
-    private Persona propietario;
+    private final Persona propietario;
 
     public MenuMiPerfil(Cliente cliente) {
         this.propietario = cliente;
@@ -18,6 +20,11 @@ public class MenuMiPerfil {
     public MenuMiPerfil(Empleado empleado) {
         this.propietario = empleado;
     }
+
+
+    GestorTarjetasBanco gestorTarjetasBanco = new GestorTarjetasBanco();
+    GestorDirecciones gestorDirecciones = new GestorDirecciones();
+
 
     /// MENU ----------------------------------------------------------------------------------
 
@@ -65,34 +72,56 @@ public class MenuMiPerfil {
 
             case 3:
                 System.out.println(cliente.getTarjetasRegistradas());
-                GestorTarjetasBanco gestorTarjetasBanco = new GestorTarjetasBanco();
                 TarjetaBanco tarjeta = gestorTarjetasBanco.cargarNuevaTarjeta();
                 gestorClientes.agregarTarjetaACliente(cliente.getDni(), tarjeta);
                 break;
 
             case 4:
+                TarjetaBanco tarjetaEliminar = eliminarDatos(cliente.getTarjetasRegistradas(), scanner);
+                gestorClientes.eliminarTarjetaACliente(cliente.getDni(), tarjetaEliminar);
+                System.out.println("El dato se elimino con exito");
+                break;
+
+            case 5:
                 System.out.println(cliente.getDirecciones());
-                GestorDirecciones gestorDirecciones = new GestorDirecciones();
                 Direccion direccion = gestorDirecciones.cargarDireccion();
                 gestorClientes.agregarDireccionACliente(cliente.getDni(), direccion);
                 break;
 
-            case 5:
+            case 6:
+                Direccion direccionEliminar = eliminarDatos(cliente.getDirecciones(), scanner);
+                gestorClientes.eliminarDireccionACliente(cliente.getDni(), direccionEliminar);
+                System.out.println("El dato se elimino con exito");
+                break;
+
+            case 7:
                 // salir
                 break;
         }
     }
 
+    /// MENU DE OPCIONES --------------------------------------------------------------------
+
     public int mostrarOpcionesCliente(Scanner scanner) {
-        int opcion = -1;
+        int opcion;
         do {
             try {
-                System.out.print("Seleccione una opcion:\n" +
-                        "[1] Modificar mis datos\n" +
-                        "[2] Modificar mis credenciales\n" +
-                        "[3] Agregar medio de pago\n" +
-                        "[4] Agregar direccion de facturacion\n" +
-                        "[0] Salir\n");
+                System.out.print("""
+                        Seleccione una opcion:
+                        [1] Modificar mis datos
+                        [2] Modificar mis credenciales
+                        
+                        Medios de pago
+                        [3] Agregar
+                        [4] Eliminar
+                        
+                        Direcciones de facturacion
+                        [5] Agregar
+                        [6] Eliminar
+                        
+                        [0] Salir
+                        """);
+
                 opcion = scanner.nextInt();
 
             } catch (InputMismatchException e) {
@@ -105,13 +134,16 @@ public class MenuMiPerfil {
     }
 
     public int mostrarOpcionesEmpleado(Scanner scanner) {
-        int opcion = -1;
+        int opcion;
         do {
             try {
-                System.out.print("Seleccione una opcion:\n" +
-                        "[1] Modificar mis datos\n" +
-                        "[2] Modificar mis credenciales\n" +
-                        "[0] Salir\n");
+                System.out.print("""
+                        Seleccione una opcion:
+                        [1] Modificar mis datos
+                        [2] Modificar mis credenciales
+                        
+                        [0] Salir
+                        """);
                 opcion = scanner.nextInt();
 
             } catch (InputMismatchException e) {
@@ -124,8 +156,23 @@ public class MenuMiPerfil {
         return opcion;
     }
 
-
     /// FUNCIONALIDADES -----------------------------------------------------------------------
+
+    public <T> T eliminarDatos(ArrayList<T> lista, Scanner scanner) {
+        System.out.println("Seleccione el registro que desea eliminar: ");
+        int i = 1; int opcion;
+
+        for (T dato : lista) {
+            System.out.println("[" + i + "] " + dato.toString());
+        }
+
+        do {
+            opcion = scanner.nextInt();
+        }  while (!GestorConsola.perteneceAlRango(opcion, 0, lista.size()));
+
+        return lista.get(opcion - 1);
+    }
+
     public void verPerfil() {
         System.out.println("-- BIENVENIDO, " + propietario.getNombre() + " --");
 

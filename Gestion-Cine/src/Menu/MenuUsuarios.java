@@ -8,17 +8,62 @@ import java.util.Scanner;
 
 public class MenuUsuarios {
 
-    public void modificarUsuarioPorLista(GestorUser gestorUser, Scanner scanner) {
-        listarUsuarios(gestorUser);
+    public void menuUsuarios(GestorUser gestorUser, Sesion sesion, Scanner scanner) {
+        boolean regresar = false;
 
-        int id = scanner.nextInt();
-        gestorUser.modificarUsuario(id, scanner);
+        while (!regresar) {
+            System.out.print("""
+                    --- GESTIÓN DE USUARIOS ---
+                    
+                    [1] Modificar usuario
+                    
+                    Buscar usuarios
+                    [2] Por dni
+                    [3] Por username
+                    [4] Ver todos
+                    
+                    [0] Salir
+                    
+                    Seleccione una opcion:
+                    """);
+
+            int opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    modificarUsuarioPorLista(gestorUser, scanner);
+                    break;
+                case 2:
+                    buscarUsuarioPorId(scanner, gestorUser);
+                    break;
+                case 3:
+                    buscarUsuarioPorUsername(gestorUser);
+                    break;
+                case 4:
+                    try {
+                        gestorUser.listarUsuarios();
+                    } catch (ColeccionVaciaException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    break;
+                case 0:
+                    regresar = true;
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        }
     }
 
-    public void modificarUsuarioPorDni(GestorUser gestorUser, Scanner scanner) {
-        listarUsuarios(gestorUser);
+    /// ACCIONES ------------------------------------------------------------
 
-        /// ver no anda
+    public void modificarUsuarioPorLista(GestorUser gestorUser, Scanner scanner) {
+        try {
+            gestorUser.listarUsuarios();
+        } catch (ColeccionVaciaException e) {
+            System.err.println("ERROR: " + e.getMessage());
+        }
 
         int id = scanner.nextInt();
         gestorUser.modificarUsuario(id, scanner);
@@ -46,53 +91,4 @@ public class MenuUsuarios {
         }
     }
 
-    public void listarUsuarios(GestorUser gestorUser) {
-        try {
-            System.out.println("Usuarios cargados en el sistema: ");
-            System.out.println("--------------------------------------------------------");
-            gestorUser.listarUsuarios();
-        } catch (ColeccionVaciaException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-
-    public void menuUsuarios(GestorUser gestorUser, Sesion sesion, Scanner scanner) {
-        boolean regresar = false;
-
-        while (!regresar) {
-            System.out.println("\n--- GESTIÓN DE USUARIOS ---");
-            System.out.println("2. Modificar un Usuario");
-            System.out.println("3. Buscar Usuario por ID");
-            System.out.println("4. Buscar Usuario por Nombre de Usuario");
-            System.out.println("5. Listar todos los usuarios");
-            System.out.println("0. Regresar");
-            System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (opcion) {
-                case 1:
-                    gestorUser.modificarUsuario(sesion.getUsuarioActual().getIdUsuario(), scanner);
-                    break;
-                case 2:
-                    modificarUsuarioPorLista(gestorUser, scanner);
-                    break;
-                case 3:
-                    buscarUsuarioPorId(scanner, gestorUser);
-                    break;
-                case 4:
-                    buscarUsuarioPorUsername(gestorUser);
-                    break;
-                case 5:
-                    listarUsuarios(gestorUser);
-                    break;
-                case 0:
-                    regresar = true;
-                    break;
-                default:
-                    System.out.println("Opción inválida.");
-            }
-        }
-    }
 }

@@ -19,7 +19,7 @@ public class GestorConsola {
     // -------------------------------------------------------------------------------------------------
     // ENUMERACIONES
 
-    public <T> T leerEnum(List<T> opciones) {
+    public static <T> T leerEnum(List<T> opciones) {
         int opcion = 0;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Seleccione una opcion: ");
@@ -47,31 +47,31 @@ public class GestorConsola {
     // -------------------------------------------------------------------------------------------------
     // VALIDACIONES FRECUENTES PARA CADENAS DE TEXTO
 
-    public boolean estaVacio(String cadena) {
+    public static boolean estaVacio(String cadena) {
         return cadena.trim().isEmpty();
     }
 
-    public boolean contieneCaracteresNoValidos(String cadena) {
+    public static boolean contieneCaracteresNoValidos(String cadena) {
         return !cadena.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+");
     }
 
-    public boolean repiteCaracteres(String cadena) {
+    public static boolean repiteCaracteres(String cadena) {
         return cadena.matches(".*([a-zA-ZáéíóúÁÉÍÓÚñÑ])\\1\\1.*");
     }
 
-    public boolean esLargoValido(String cadena, int min, int max) {
+    public static boolean esLargoValido(String cadena, int min, int max) {
         return (cadena.length() <= max) && (cadena.length() >= min);
     }
 
-    public boolean esLargoValido(String cadena, int largo) {
+    public static boolean esLargoValido(String cadena, int largo) {
         return cadena.length() == largo;
     }
 
-    public boolean contieneSoloNumeros(String cadena) throws NumberFormatException {
+    public static boolean contieneSoloNumeros(String cadena) throws NumberFormatException {
         return cadena.matches("\\d+");
     }
 
-    public boolean esEmailValido(String email)
+    public static boolean esEmailValido(String email)
             throws EmailInvalidoException {
         Pattern pattern = Pattern.compile("^[\\w.-]+@[\\w-]+\\.[a-z]{2,}$");
 
@@ -91,7 +91,7 @@ public class GestorConsola {
         }
     }
 
-    public boolean isValidUsername(String username){
+    public static boolean isValidUsername(String username){
         if(estaVacio(username)){
             throw new UsernameNoValidoException("El nombre de usuario no puede estar vacio.");
         }
@@ -108,7 +108,7 @@ public class GestorConsola {
         return true;
     }
 
-    public boolean isValidPassword(String password){
+    public static boolean isValidPassword(String password){
         if(estaVacio(password)){
             throw new PasswordNoValidaException("La contraseña no puede estar vacia.");
         }
@@ -127,7 +127,7 @@ public class GestorConsola {
     // --------------------------------------------------------------------------------------------------
     // VALIDACIONES FRECUENTES PARA FECHAS
 
-    public boolean esFormatoDeFechaValido(String fecha, String formato) {
+    public static boolean esFormatoDeFechaValido(String fecha, String formato) {
         DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern(formato);
 
         try {
@@ -138,8 +138,8 @@ public class GestorConsola {
         }
     }
 
-    public LocalDate parsearFecha(String fecha) {
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    public static LocalDate parsearFecha(String fecha, String formato) {
+        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern(formato);
 
         try {
             return LocalDate.parse(fecha, formatoFecha);
@@ -149,11 +149,11 @@ public class GestorConsola {
         }
     }
 
-    public boolean esAnteriorAHoy(LocalDate fecha) {
+    public static boolean esAnteriorAHoy(LocalDate fecha) {
         return fecha.isBefore(LocalDate.now());
     }
 
-    public boolean esEdadValida(LocalDate fecha) {
+    public static boolean esEdadValida(LocalDate fecha) {
         LocalDate ahora = LocalDate.now();
         return fecha.isAfter(ahora.minusYears(130)) && fecha.isBefore(ahora.minusYears(18));
     }
@@ -162,19 +162,19 @@ public class GestorConsola {
     // --------------------------------------------------------------------------------------------------
     // VALIDACIONES FRECUENTES PARA NUMEROS
 
-    public boolean perteneceAlRango(int numero, int min, int max) {
+    public static boolean perteneceAlRango(int numero, int min, int max) {
         return numero >= min && min <= max;
     }
 
-    public boolean esMayor(int numero, int min) {
+    public static boolean esMayor(int numero, int min) {
         return numero > min;
     }
 
-    public boolean esMenor(int numero, int max) {
+    public static boolean esMenor(int numero, int max) {
         return numero < max;
     }
 
-    public boolean esPositivo(int numero) {
+    public static boolean esPositivo(int numero) {
         return numero > 0;
     }
 
