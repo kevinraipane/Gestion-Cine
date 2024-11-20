@@ -83,52 +83,7 @@ public class User {
     }
 
     //Metodo para recibir un username, y verificarla
-    public String capturarUsername(){
-        Scanner scanner = new Scanner(System.in);
-        String username = null;
-        boolean valido = false;
 
-        while (!valido){
-            System.out.println("Por favor, ingrese un nombre de usuario: ");
-            username = scanner.nextLine();
-
-            try {
-                valido = gestorConsola.isValidUsername(username);
-                if(valido){
-                    System.out.println("Nombre de usuario valido.");
-                }
-            }catch (UsernameNoValidoException e){
-                System.err.println("Error: " + e.getMessage());
-                System.out.println("Intentelo nuevamente.");
-            }
-        }
-
-        return username;
-    }
-
-    //Metodo para recibir una contraña, y verificarla
-    public String capturarPassword(){
-        Scanner scanner = new Scanner(System.in);
-        String password = null;
-        boolean valido = false;
-
-        while (!valido){
-            System.out.println("Por favor, ingrese una contraseña: ");
-            password = scanner.nextLine();
-
-            try{
-                valido = gestorConsola.isValidPassword(password);
-                if(valido){
-                    System.out.println("Contraseña valida.");
-                }
-            }catch (PasswordNoValidaException e){
-                System.err.println("Error: " + e.getMessage());
-                System.out.println("Intentelo nuevamente.");
-            }
-        }
-
-        return password;
-    }
 
     //Verificacion de Password
     public boolean verificarPassword(String inputPassword) {

@@ -2,22 +2,14 @@ package Modelos.Personas;
 
 public class Direccion {
 
-    private int idDireccion;
-    private int cantDirecciones;
-
     private String calle;
     private int numero;
     private String localidad;
 
     public Direccion(String calle, int numero, String localidad) {
-        this.idDireccion = cantDirecciones++;
         this.calle = calle;
         this.numero = numero;
         this.localidad = localidad;
-    }
-
-    public int getIdDireccion() {
-        return idDireccion;
     }
 
     public String getCalle() {
