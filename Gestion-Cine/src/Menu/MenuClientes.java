@@ -73,15 +73,22 @@ public class MenuClientes {
 
         while (!regresar) {
             do {
-                System.out.println("\n--- GESTIÓN DE CLIENTES ---");
-                System.out.println("1. Crear Cliente");
-                System.out.println("2. Listar Clientes");
-                System.out.println("3. Buscar Cliente por DNI");
-                System.out.println("4. Eliminar Cliente");
-                System.out.println("5. Modificar Cliente");
-
-                System.out.println("0. Regresar");
-                System.out.print("Seleccione una opción: ");
+                System.out.print("""
+                        --- GESTIÓN DE CLIENTES ---
+                        
+                        [1] Crear cliente
+                        [2] Eliminar cliente
+                        [3] Modificar cliente
+                        
+                        Buscar clientes
+                        [2] Por DNI
+                        [3] Ver todos
+                        
+                        [0] Volver
+                        
+                        Seleccione una opcion:
+                        
+                        """);
 
                 opcion = scanner.nextInt();
                 scanner.nextLine();
@@ -92,16 +99,16 @@ public class MenuClientes {
                     crearCliente(gestorClientes, gestorUser);
                     break;
                 case 2:
-                    gestorClientes.listarClientes();
-                    break;
-                case 3:
-                    buscarCliente(gestorClientes);
-                    break;
-                case 4:
                     eliminarCliente(gestorClientes);
                     break;
-                case 5:
+                case 3:
                     modificarCliente(gestorClientes);
+                    break;
+                case 4:
+                    buscarCliente(gestorClientes);
+                    break;
+                case 5:
+                    gestorClientes.listarClientes();
                 case 0:
                     regresar = true;
                     break;
