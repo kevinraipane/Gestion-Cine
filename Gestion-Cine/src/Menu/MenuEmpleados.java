@@ -16,7 +16,7 @@ public class MenuEmpleados {
         System.out.println("Empleado creado: " + nuevoEmpleado);
 
         boolean usuarioCreado = false;
-        do{
+        do {
             System.out.println("Ahora debe crear un usuario para este empleado.");
 
             String username = gestorUser.capturarUsername();
@@ -69,14 +69,20 @@ public class MenuEmpleados {
         boolean regresar = false;
 
         while (!regresar) {
-            System.out.println("\n--- GESTIÓN DE EMPLEADOS ---");
-            System.out.println("1. Crear Empleado");
-            System.out.println("2. Listar Empleados");
-            System.out.println("3. Buscar Empleado por DNI");
-            System.out.println("4. Eliminar Empleado");
-            System.out.println("5. Modificar datos de Empleado");
-            System.out.println("0. Regresar");
-            System.out.print("Seleccione una opción: ");
+            System.out.print("""
+                    --- GESTIÓN DE EMPLEADOS ---
+                    
+                    [1] Crear nuevo empleado
+                    [2] Eliminar empleado
+                    [3] Modificar empleado
+                    
+                    Buscar empleado
+                    [4] Por DNI
+                    [5] Ver todos
+                    
+                    Seleccione una opcion:
+                    """);
+
             int opcion = scanner.nextInt();
             scanner.nextLine();
 
@@ -85,16 +91,16 @@ public class MenuEmpleados {
                     crearEmpleado(gestorEmpleados, gestorUser);
                     break;
                 case 2:
-                    gestorEmpleados.listarEmpleados();
-                    break;
-                case 3:
-                    buscarEmpleado(gestorEmpleados);
-                    break;
-                case 4:
                     eliminarEmpleado(gestorEmpleados);
                     break;
-                case 5:
+                case 3:
                     modificarEmpleado(gestorEmpleados);
+                    break;
+                case 4:
+                    buscarEmpleado(gestorEmpleados);
+                    break;
+                case 5:
+                    gestorEmpleados.listarEmpleados();
                     break;
                 case 0:
                     regresar = true;
