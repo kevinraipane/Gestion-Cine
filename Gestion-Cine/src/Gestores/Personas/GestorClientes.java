@@ -262,7 +262,7 @@ public class GestorClientes {
         boolean valido = false;
 
         do {
-            System.out.println("Ingrese su dni:");
+            System.out.println("Ingrese el dni:");
             dni = scanner.nextLine().trim();
             valido = true;
 
