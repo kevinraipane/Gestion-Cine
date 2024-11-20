@@ -35,7 +35,7 @@ public class GestorEntradas {
 
     ///   Registro entradasCrud correspondientes a 1 función.
     ///                   Lógica:
-    /// 1. En un case del menu, primero se buscaría la función que el admin desee, pasándole id,
+    /// 1. En un case del menu, primero se buscaría la función que el admin desee, pasándole idPelicula,
     /// en el gestor de funciones.
     /// 2. Después, almacenamos esa función en un objeto.
     /// 3. Por ultimo le pasamos ese objeto de parámetro a esta función.

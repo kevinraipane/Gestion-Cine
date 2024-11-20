@@ -1,7 +1,7 @@
 package Modelos.Cine;
 
 import Gestores.Cine.GestorEntradas;
-import Modelos.Personas.Cliente;
+//import Modelos.Personas.Cliente;
 
 import java.util.Date;
 
@@ -14,7 +14,7 @@ public class Factura {
     //Métodos de pagos: ¿enums?
     private double total;
     private Date fechaPago;
-    private Cliente cliente;
+    //private Cliente cliente;
 
     //Proximamente (?)
 
