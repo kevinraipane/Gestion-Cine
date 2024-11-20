@@ -1,11 +1,9 @@
 package Gestores.Personas;
 
 import Enumeraciones.EstadoUsuario;
-import Excepciones.ColeccionVaciaException;
-import Excepciones.CredencialesInvalidasException;
-import Excepciones.UserNoEncontradoException;
-import Excepciones.UsuarioYaExisteException;
+import Excepciones.*;
 import Gestores.Funcionales.GestorConsola;
+import Modelos.Personas.Sesion;
 import Modelos.Personas.User;
 
 import com.google.gson.Gson;
@@ -23,78 +21,84 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class GestorUser {
-    private static final String FILE_PATH = "usuarios.json";
+    private static final String USUARIOS_FILE_PATH = "usuarios.json";
+
     Scanner scanner = new Scanner(System.in);
     GestorConsola gestorConsola = new GestorConsola();
 
     private Set<User> usuarios;
     private int lastId = 0;
 
-    public GestorUser(){
+    public GestorUser() {
         this.usuarios = new HashSet<>();
         cargarUsuarios();//Cargar los usuarios desde el archivo JSON al iniciar
     }
 
 
-    //Agregar un nuevo user
-    public void create(String username,String password)
-        throws UsuarioYaExisteException {
-        for(User user : usuarios){
-            if(user.getUsername().equals(username)){
-                throw new UsuarioYaExisteException("El usuario con nombre " +username+ " ya existe en el sistema.");
-            }
+    /// AGREGAR NUEVO USUARIO ------------------------------------------------------------------
+
+    public void crearUsuario(String username, String password)
+            throws UsuarioYaExisteException {
+
+        try {
+            usernameDisponible(username);
+        } catch (UsuarioYaExisteException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
 
         //Si no existe, se crea un nuevo usuario con el ultimo ID
         int newId = (++lastId);//Incremento el id que tengo leido desde el json
-        User newUser = new User(newId,username,password);
-        if(usuarios.add(newUser)){
+        User newUser = new User(newId, username, password);
+
+        if (usuarios.add(newUser)) {
             guardarUsuarios();//Guardo los cambios en JSON
             System.out.println("Usuario creado:" + newUser.getUsername());
-        }else{
+
+        } else {
             throw new UsuarioYaExisteException("El usuario ya existe en el sistema.");
         }
     }
 
-    //Modificar un usuario
-    public void modificarUsuario(int idUsuario,String nuevoUsername,String nuevaPassword,EstadoUsuario nuevoEstadoUsuario)
-            throws UserNoEncontradoException{
+    /// MODIFICAR USUARIO ----------------------------------------------------------------------
+
+    public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstadoUsuario)
+            throws UserNoEncontradoException {
 
         User usuario = buscarPorId(idUsuario);
 
-        if(usuario == null){
-            throw new UserNoEncontradoException("No se encontro el usuario con ID: " +idUsuario);
+        if (usuario == null) {
+            throw new UserNoEncontradoException("No se encontro el usuario con ID: " + idUsuario);
         }
 
         //Modifico solo los atributos que no sean nulos
-        if(nuevoUsername != null && !nuevoUsername.isEmpty()){
+        if (nuevoUsername != null && !nuevoUsername.isEmpty()) {
             usuario.setUsername(nuevoUsername);
         }
 
-        if(nuevaPassword != null && !nuevaPassword.isEmpty()){
+        if (nuevaPassword != null && !nuevaPassword.isEmpty()) {
             usuario.setPassword(GestorContraseña.encriptadorContraseña(nuevaPassword));
         }
 
-        if(nuevoEstadoUsuario != null){
+        if (nuevoEstadoUsuario != null) {
             usuario.setEstadoUsuario(nuevoEstadoUsuario);
         }
 
         guardarUsuarios();
-        System.out.println("Usuario con ID " +idUsuario+ " modificado con exito.");
+        System.out.println("Usuario con ID " + idUsuario + " modificado con exito.");
     }
 
-    public void seleccionarYModificarUsuario(int idUsuario,Scanner scanner){
+    public void modificarUsuario(int idUsuario, Scanner scanner) {
         User usuario = buscarPorId(idUsuario);
-        if(usuario == null){
-            System.out.println("No se encontro el usuario con ID: " +idUsuario);
+
+        if (usuario == null) {
+            System.out.println("No se encontro el usuario con ID: " + idUsuario);
             return;
         }
 
-        //Muestro las opciones de modificacion
         System.out.println("¿Qué atributo desea modificar del usuario?");
         System.out.println("1. Modificar Username");
         System.out.println("2. Modificar Password");
-        System.out.println("3. Modificar Estado del Usuario");
+        System.out.println("3. Dar de BAJA/ALTA el Usuario");
         System.out.println("4. Modificar todos los atributos");
         System.out.print("Seleccione una opción: ");
 
@@ -104,31 +108,87 @@ public class GestorUser {
         switch (opcion) {
             case 1:
                 System.out.print("Ingrese el nuevo username: ");
-                String nuevoUsername = scanner.nextLine();
-                modificarUsuario(idUsuario, nuevoUsername, usuario.getPassword(), usuario.getEstadoUsuario());
+                String nuevoUsername = capturarUsername();
+                reemplazarUsuario(idUsuario, nuevoUsername, usuario.getPassword(), usuario.getEstadoUsuario());
                 break;
+
             case 2:
                 System.out.print("Ingrese la nueva contraseña: ");
-                String nuevaPassword = scanner.nextLine();
-                modificarUsuario(idUsuario, usuario.getUsername(), nuevaPassword, usuario.getEstadoUsuario());
+                String nuevaPassword = capturarPassword();
+                reemplazarUsuario(idUsuario, usuario.getUsername(), nuevaPassword, usuario.getEstadoUsuario());
                 break;
+
             case 3:
                 System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
                 EstadoUsuario nuevoEstado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
-                modificarUsuario(idUsuario, usuario.getUsername(), usuario.getPassword(), nuevoEstado);
+                reemplazarUsuario(idUsuario, usuario.getUsername(), usuario.getPassword(), nuevoEstado);
                 break;
+
             case 4:
                 System.out.print("Ingrese el nuevo username: ");
-                String username = scanner.nextLine();
+                String username = capturarUsername();
                 System.out.print("Ingrese la nueva contraseña: ");
-                String password = scanner.nextLine();
+                String password = capturarPassword();
                 System.out.print("Ingrese el nuevo estado del usuario (ACTIVO/INACTIVO): ");
                 EstadoUsuario estado = gestorConsola.leerEnum(Arrays.asList(EstadoUsuario.values()));
-                modificarUsuario(idUsuario, username, password, estado);
+                reemplazarUsuario(idUsuario, username, password, estado);
                 break;
+
             default:
                 System.out.println("Opción no válida.");
         }
+    }
+
+    public void modificarUsuarioPorId(Scanner scanner, int idUsuario) {
+        modificarUsuario(idUsuario, scanner);
+    }
+
+    /// INGRESO DE DATOS --------------------------------------------------------------
+
+    public String capturarUsername() {
+        Scanner scanner = new Scanner(System.in);
+        String username = null;
+        boolean valido = false;
+
+        while (!valido) {
+            System.out.println("Por favor, ingrese un nombre de usuario: ");
+            username = scanner.nextLine();
+
+            try {
+                valido = gestorConsola.isValidUsername(username);
+                if (valido) {
+                    System.out.println("Nombre de usuario valido.");
+                }
+            } catch (UsernameNoValidoException e) {
+                System.err.println("Error: " + e.getMessage());
+                System.out.println("Intentelo nuevamente.");
+            }
+        }
+
+        return username;
+    }
+
+    public String capturarPassword() {
+        Scanner scanner = new Scanner(System.in);
+        String password = null;
+        boolean valido = false;
+
+        while (!valido) {
+            System.out.println("Por favor, ingrese una contraseña: ");
+            password = scanner.nextLine();
+
+            try {
+                valido = gestorConsola.isValidPassword(password);
+                if (valido) {
+                    System.out.println("Contraseña valida.");
+                }
+            } catch (PasswordNoValidaException e) {
+                System.err.println("Error: " + e.getMessage());
+                System.out.println("Intentelo nuevamente.");
+            }
+        }
+
+        return password;
     }
 
 
@@ -137,119 +197,157 @@ public class GestorUser {
     //Que obtenga el dato antes de modificar
 
 
-    //Buscar un usuario por id
+    /// BUSCAR USUARIOS ---------------------------------------------------------------------------------------------
+
+    // por ID
     public User buscarPorId(int idUsuario)
-        throws UserNoEncontradoException{
-        for(User u : usuarios){
-            if(u.getIdUsuario() == idUsuario){
+            throws UserNoEncontradoException {
+        for (User u : usuarios) {
+            if (u.getIdUsuario() == idUsuario) {
                 return u;
             }
         }
-        throw new UserNoEncontradoException("El usuario con ID: " +idUsuario+ " no existe en el sistema.");
+        throw new UserNoEncontradoException("El usuario con ID: " + idUsuario + " no existe en el sistema.");
     }
 
-    //Buscar usuario por username
+    // por username
     public User buscarPorUsername(String username)
-            throws UserNoEncontradoException{
-        for (User u : usuarios){
-            if(u.getUsername().equals(username)){
+            throws UserNoEncontradoException {
+        for (User u : usuarios) {
+            if (u.getUsername().equals(username)) {
                 return u;
             }
         }
-        throw new UserNoEncontradoException("El usuario " +username+ " no existe en el sistema.");
+        throw new UserNoEncontradoException("El usuario " + username + " no existe en el sistema.");
     }
 
-    //Mostrar todos los usuarios
+    /// LISTAR USUARIOS ------------------------------------------------------------------------------------------
+
     public void listarUsuarios()
-        throws ColeccionVaciaException {
-        if(!usuarios.isEmpty()){
-            for(User u : usuarios){
+            throws ColeccionVaciaException {
+        if (!usuarios.isEmpty()) {
+            for (User u : usuarios) {
                 System.out.println(u);
                 System.out.println("--------------------------------------------------------");
             }
-        }else{
+        } else {
             throw new ColeccionVaciaException("La coleccion se encuentra vacia.");
         }
-
     }
 
-    //Eliminar usuario por username
+    /// ELIMINAR USUARIOS -----------------------------------------------------------------------------------------
+
     public void eliminarUsuario(String username)
-            throws UserNoEncontradoException{
+            throws UserNoEncontradoException {
         User usuarioAEliminar = buscarPorUsername(username);
-        if(usuarioAEliminar != null){
+        if (usuarioAEliminar != null) {
             usuarioAEliminar.setEstadoUsuario(EstadoUsuario.INACTIVO);
             guardarUsuarios(); //Guardo los cambios despues de la eliminacion.
-            System.out.println("Usuario eliminado: " +username);
-        }else{
-            throw new UserNoEncontradoException("El usuario " +username+ " no pudo eliminar porque no existe.");
+            System.out.println("Usuario eliminado: " + username);
+        } else {
+            throw new UserNoEncontradoException("El usuario " + username + " no pudo eliminar porque no existe.");
         }
     }
 
-    //Metodo para verificar si la contraseña ingresada es correcta
-    public boolean validarPassword(String username,String inputPassword){
-        User user = buscarPorUsername(username);
-        return user.verificarPassword(inputPassword);
+    /// INICIO DE SESION --------------------------------------------------------------------------------------------
+
+    public void validarInicioSesion(Sesion sesion, GestorUser gestorUser) {
+        while (!sesion.haySesionActiva()) {
+            System.out.println("Bienvenido. Por favor, ingrese sus credenciales.");
+
+            String username = gestorUser.capturarUsername();
+            String password = gestorUser.capturarPassword();
+
+            try {
+                User usuario = gestorUser.iniciarSesion(username, password);
+                sesion.iniciarSesion(usuario);
+                System.out.println("Sesión iniciada como: " + usuario.getUsername());
+
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+
+            }
+        }
     }
 
-    //Metodo para iniciar sesion
-    public User iniciarSesion(String username,String password)
-        throws UserNoEncontradoException, CredencialesInvalidasException{
+    public User iniciarSesion(String username, String password)
+            throws UserNoEncontradoException, CredencialesInvalidasException {
+
         User usuario = buscarPorUsername(username);
-        if(usuario != null && usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))){//Valido la contraseña
-            if(usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO){
+
+        if (usuario != null && usuario.getPassword().equals(GestorContraseña.encriptadorContraseña(password))) {//Valido la contraseña
+            if (usuario.getEstadoUsuario() == EstadoUsuario.INACTIVO) {
                 throw new CredencialesInvalidasException("El usuario esta desactivado (Dado de baja).");
             }
             return usuario; //Retorno el usuario sin las credenciales son correctas y esta activo.
+
         } else {
             throw new CredencialesInvalidasException("Credenciales incorrectas.");
         }
     }
 
-    //Cargar usuarios desde el archivo JSON
-    private void cargarUsuarios(){
+
+    /// ARCHIVOS: JSON -----------------------------------------------------------------------------------------
+
+    // Cargar usuarios desde JSON
+    private void cargarUsuarios() {
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader(FILE_PATH)){
+        try (FileReader reader = new FileReader(USUARIOS_FILE_PATH)) {
             JsonObject data = gson.fromJson(reader, JsonObject.class);
 
-            if(data != null){
+            if (data != null) {
                 //Cargo el ultimo id del json
-                if(data.has("lastId")){
+                if (data.has("lastId")) {
                     this.lastId = data.get("lastId").getAsInt();
                 }
                 //Leo los usuarios
-                if(data.has("usuarios")){
-                    Type setType = new TypeToken<HashSet<User>>() {}.getType();
-                    Set<User> usuariosCargados = gson.fromJson(data.get("usuarios"),setType);
-                    if(usuariosCargados != null){
+                if (data.has("usuarios")) {
+                    Type setType = new TypeToken<HashSet<User>>() {
+                    }.getType();
+                    Set<User> usuariosCargados = gson.fromJson(data.get("usuarios"), setType);
+                    if (usuariosCargados != null) {
                         this.usuarios = usuariosCargados;
                     }
                 }
             }
-        }catch (IOException e){
-            System.out.println("No se puedo cargar el archivo JSON: " +e.getMessage());
+        } catch (IOException e) {
+            System.out.println("No se puedo cargar el archivo JSON: " + e.getMessage());
         }
     }
 
 
-    //Guardar usuarios en un archivo JSON
-    private void guardarUsuarios(){
+    // Guardar usuarios en un archivo JSON
+    private void guardarUsuarios() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(FILE_PATH)){
+        try (FileWriter writer = new FileWriter(USUARIOS_FILE_PATH)) {
             JsonObject data = new JsonObject();
 
             //Guardo el ultimo id
-            data.addProperty("lastId",this.lastId);
+            data.addProperty("lastId", this.lastId);
 
             //Guardo los usuarios
-            data.add("usuarios",gson.toJsonTree(this.usuarios));
+            data.add("usuarios", gson.toJsonTree(this.usuarios));
 
             //Escribo los usuarios en el archivo
-            gson.toJson(data,writer);
-        }catch (IOException e){
-            System.out.println("No se pudo guardar el archivo JSON: " +e.getMessage());
+            gson.toJson(data, writer);
+        } catch (IOException e) {
+            System.out.println("No se pudo guardar el archivo JSON: " + e.getMessage());
         }
     }
+
+    /// VALIDACIONES -----------------------------------------------------------------
+
+    private boolean usernameDisponible(String username) throws UsuarioYaExisteException {
+        for (User user : usuarios) {
+            if (user.getUsername().equals(username)) {
+                throw new UsuarioYaExisteException("El usuario con nombre " + username + " ya existe en el sistema.");
+            }
+        }
+
+        return true;
+    }
+
+
 }
 
 /**

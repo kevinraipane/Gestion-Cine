@@ -12,7 +12,6 @@ public abstract class Persona {
     private String dni;
     private String email;
     private LocalDate fechaNacimiento;
-    private EstadoUsuario estadoUsuario;
 
     public Persona(int idUsuario,String nombre, String apellido, String dni, String email, LocalDate fechaNacimiento) {
         this.idUsuario = idUsuario;
@@ -21,7 +20,6 @@ public abstract class Persona {
         this.dni = dni;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
-        this.estadoUsuario = EstadoUsuario.ACTIVO;
     }
 
     //Getters y Setters
@@ -49,10 +47,6 @@ public abstract class Persona {
         return fechaNacimiento;
     }
 
-    public EstadoUsuario getEstadoUsuario() {
-        return estadoUsuario;
-    }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -73,9 +67,6 @@ public abstract class Persona {
         this.fechaNacimiento = fecha;
     }
 
-    public void setEstadoUsuario(EstadoUsuario estadoUsuario) {
-        this.estadoUsuario = estadoUsuario;
-    }
 
     @Override
     public String toString() {
@@ -85,7 +76,6 @@ public abstract class Persona {
                 ", apellido='" + apellido + '\'' +
                 ", dni='" + dni + '\'' +
                 ", email='" + email + '\'' +
-                ", estado usuario='" + estadoUsuario + '\'' +
                 ", fechaNacimiento=" + fechaNacimiento;
     }
 }

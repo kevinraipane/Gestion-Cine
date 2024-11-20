@@ -29,7 +29,7 @@ public class GestorContraseña {
  * "SHA-256".
  *
  * --Convertir la contraseña a un arreglo de bytes y aplicar el hash: byte[] hash = digest.digest(contraseña.getBytes());
- * El método digest toma el array de bytes de la contraseña y calcula el resumen (hash) aplicando SHA-256, devolviendo
+ * El metodo digest toma el array de bytes de la contraseña y calcula el resumen (hash) aplicando SHA-256, devolviendo
  * un array de bytes que representa el hash.
  *
  * --Crear un StringBuilder para almacenar el resultado en hexadecimal:StringBuilder hexString = new StringBuilder();
