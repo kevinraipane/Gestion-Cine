@@ -70,7 +70,6 @@ public class GestorEmpleados {
         return new Empleado(idUsuario, nombre, apellido, dni, email, fechaNacimiento, cargo);
     }
 
-
     /// AGREGAR EMPLEADO A LA LISTA -----------------------------------------------------------------------------------
 
     public void agregarNuevoEmpleado(Empleado empleado) {
@@ -162,123 +161,108 @@ public class GestorEmpleados {
     /// MODIFICAR EMPLEADOS ----------------------------------------------------------------------------------
 
     public Empleado modificarEmpleado(String dni) {
-        byte opcion = 0;
         Empleado empleado = null;
-        boolean repetir = false;
 
         try {
             empleado = buscarEmpleadoPorDNI(dni);
         } catch (DniInexistenteException e) {
             System.out.println(e.getMessage());
+            return null;
         }
 
+        int opcion;
         do {
-            do {
-                System.out.print("Seleccione el dato que desea modificar:" +
-                        "[1] Nombre" +
-                        "[2] Apellido" +
-                        "[3] Fecha de Nacimiento" +
-                        "[4] Email" +
-                        "[5] Cargo" +
-                        "[6] Estado" +
-                        "[7] Modificar todos los campos" +
-                        "[0] Salir");
+            opcion = mostrarMenuModificacion();
 
-                opcion = scanner.nextByte();
+            switch (opcion) {
+                case 1:
+                    empleado.setNombre(gestorPersonas.leerNombre());
+                    break;
 
-                if (opcion > 6 || opcion < 0) {
-                    System.out.println("Opcion invalida, intente nuevamente");
-                }
+                case 2:
+                    empleado.setApellido(gestorPersonas.leerApellido());
+                    break;
 
-            } while (opcion > 7 || opcion < 0);
+                case 3:
+                    empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
+                    break;
 
-            int modificar;
-            do {
-                System.out.println("Desea modificar otro dato?");
-                System.out.println("[1] SI");
-                System.out.println("[2] NO");
+                case 4:
+                    empleado.setEmail(gestorPersonas.leerEmail());
+                    break;
 
-                modificar = scanner.nextInt();
+                case 5:
+                    System.out.println("Cargo del empleado:");
+                    CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                    empleado.setCargo(cargo);
+                    break;
 
-                if (modificar != 1 && modificar != 2) {
-                    System.out.println("Opcion invalida");
-                }
+                case 6:
+                    cambiarEstadoEmpleado(empleado);
+                    break;
 
-            } while (modificar != 1 && modificar != 2);
+                case 7:
+                    empleado.setNombre(gestorPersonas.leerNombre());
+                    empleado.setApellido(gestorPersonas.leerApellido());
+                    empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
+                    empleado.setEmail(gestorPersonas.leerEmail());
+                    System.out.println("Cargo del empleado:");
+                    cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
+                    empleado.setCargo(cargo);
+                    break;
 
-            if (modificar == 1) {
-                repetir = true;
+                case 0:
+                    System.out.println("Saliendo");
+                    break;
+
+                default:
+                    System.out.println("Opción inválida.");
             }
-
-        } while (repetir);
-
-        switch (opcion) {
-            case 1:
-                empleado.setNombre(gestorPersonas.leerNombre());
-                break;
-
-            case 2:
-                empleado.setApellido(gestorPersonas.leerApellido());
-                break;
-
-            case 3:
-                empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
-                break;
-
-            case 4:
-                empleado.setEmail(gestorPersonas.leerEmail());
-                break;
-
-            case 5:
-                System.out.println("Cargo del empleado");
-                CargoEmpleado cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
-                empleado.setCargo(cargo);
-                break;
-
-            case 7:
-                empleado.setNombre(gestorPersonas.leerNombre());
-                empleado.setApellido(gestorPersonas.leerApellido());
-                empleado.setFechaNacimiento(gestorPersonas.leerFechaNacimiento());
-                empleado.setEmail(gestorPersonas.leerEmail());
-                System.out.println("Cargo del empleado");
-                cargo = gestorConsola.leerEnum(Arrays.asList(CargoEmpleado.values()));
-                empleado.setCargo(cargo);
-
-                break;
-
-            case 6:
-                byte flag = -1;
-
-                do {
-                    if (empleado.estaActivo()) {
-                        System.out.println("Desea dar de BAJA el empleado?");
-                    } else if (empleado.dadoDeBaja()) {
-                        System.out.println("Desea dar de ALTA el empleado?");
-                    }
-
-                    System.out.println("[1] SI");
-                    System.out.println("[2] NO");
-
-                    flag = scanner.nextByte();
-                } while (flag != 1 && flag != 2);
-
-                if (empleado.estaActivo() && flag == 1) {
-                    bajaEmpleado(empleado.getDni());
-                } else if (empleado.dadoDeBaja() && flag == 1) {
-                    altaEmpleado(empleado.getDni());
-                }
-
-                break;
-            case 0: // salir
-        }
+        } while (opcion != 0);
 
         return empleado;
     }
 
+    private int mostrarMenuModificacion() {
+        int opcion = -1;
+        do {
+            try {
+                System.out.print("Seleccione el dato que desea modificar:\n" +
+                        "[1] Nombre\n" +
+                        "[2] Apellido\n" +
+                        "[3] Fecha de Nacimiento\n" +
+                        "[4] Email\n" +
+                        "[5] Cargo\n" +
+                        "[6] Estado\n" +
+                        "[7] Modificar todos los campos\n" +
+                        "[0] Salir\n");
+                opcion = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, ingrese un número.");
+                opcion = -1;
+            }
+        } while (opcion < 0 || opcion > 7);
+        return opcion;
+    }
+
+    private void cambiarEstadoEmpleado(Empleado empleado) {
+        System.out.println(empleado.estaActivo() ? "Desea dar de BAJA el empleado?" : "Desea dar de ALTA el empleado?");
+        System.out.println("[1] SI\n[2] NO");
+
+        int opcion = Integer.parseInt(scanner.nextLine());
+        if (opcion == 1) {
+            if (empleado.estaActivo()) {
+                bajaEmpleado(empleado.getDni());
+            } else {
+                altaEmpleado(empleado.getDni());
+            }
+        }
+    }
+
+
     public void reemplazarEmpleado(String dni, Empleado empleadoModificado) {
         try {
-            Empleado empleadoActual = buscarEmpleadoPorDNI(dni);
-            empleadoActual = empleadoModificado;
+            empleados.replace(dni, empleadoModificado);
             System.out.println("Empleado modificado con exito");
 
             guardarEmpleados();
@@ -358,7 +342,7 @@ public class GestorEmpleados {
         boolean valido;
 
         do {
-            System.out.println("Ingrese su dni:");
+            System.out.println("Ingrese el dni:");
             dni = scanner.nextLine().trim();
             valido = true;
 

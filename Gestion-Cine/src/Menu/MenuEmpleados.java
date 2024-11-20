@@ -18,9 +18,8 @@ public class MenuEmpleados {
         boolean usuarioCreado = false;
         do{
             System.out.println("Ahora debe crear un usuario para este empleado.");
-            System.out.print("Ingrese el nombre de usuario: ");
+
             String username = gestorUser.capturarUsername();
-            System.out.print("Ingrese la contraseña: ");
             String password = gestorUser.capturarPassword();
 
             try {
@@ -35,7 +34,6 @@ public class MenuEmpleados {
     }
 
     public void buscarEmpleado(GestorEmpleados gestorEmpleados) {
-        System.out.print("Ingrese el DNI del empleado: ");
         String dni = gestorEmpleados.leerDniEmpleado();
 
         try {
@@ -46,7 +44,6 @@ public class MenuEmpleados {
     }
 
     public void eliminarEmpleado(GestorEmpleados gestorEmpleados) {
-        System.out.print("Ingrese el DNI del empleado a eliminar: ");
         String dni = gestorEmpleados.leerDniEmpleado();
 
         try {

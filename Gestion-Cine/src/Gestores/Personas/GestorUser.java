@@ -23,7 +23,6 @@ import java.util.Set;
 public class GestorUser {
     private static final String USUARIOS_FILE_PATH = "usuarios.json";
 
-    Scanner scanner = new Scanner(System.in);
     GestorConsola gestorConsola = new GestorConsola();
 
     private Set<User> usuarios;
@@ -61,7 +60,7 @@ public class GestorUser {
     /// MODIFICAR USUARIO ----------------------------------------------------------------------
 
     public void reemplazarUsuario(int idUsuario, String nuevoUsername, String nuevaPassword, EstadoUsuario nuevoEstado) {
-        User usuario = null;
+        User usuario;
 
         try {
             usuario = buscarPorId(idUsuario);
@@ -84,7 +83,7 @@ public class GestorUser {
             String username = usuario.getUsername();
             String password = usuario.getPassword();
             EstadoUsuario estadoUsuario = usuario.getEstadoUsuario();
-            int opcion = -1;
+            int opcion;
 
             do {
                 System.out.println("¿Qué atributo desea modificar del usuario?");
@@ -347,7 +346,7 @@ public class GestorUser {
 
 }
 
-/**
+/*
  * Type setType = new TypeToken<HashSet<Usuario>>() {}.getType();
  * TypeToken<HashSet<Usuario>>: TypeToken es una clase de Gson que nos ayuda a especificar tipos complejos en tiempo
  * de ejecución, como HashSet<Usuario>.
@@ -355,6 +354,6 @@ public class GestorUser {
  * esta instancia para entender el tipo exacto con el que debe trabajar, ya que Java pierde la información de tipo
  * genérico en tiempo de ejecución (debido a type erasure o eliminación de tipos). En otras palabras, Java no sabe
  * que estamos trabajando con HashSet<Usuario> en lugar de simplemente HashSet.
- * .getType(): Este método devuelve un objeto Type que representa el tipo HashSet<Usuario>. Gson usa este Type para
+ * .getType(): Este metodo devuelve un objeto Type que representa el tipo HashSet<Usuario>. Gson usa este Type para
  * deserializar correctamente el JSON en un HashSet<Usuario>.
  */

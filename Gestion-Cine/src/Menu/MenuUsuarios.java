@@ -62,10 +62,7 @@ public class MenuUsuarios {
 
         while (!regresar) {
             System.out.println("\n--- GESTIÓN DE USUARIOS ---");
-            System.out.println("1. Modificar mi usuario");
-            System.out.println("2. Modificar un usuario (Admin)");
-            //AGREGAR A LA OPCION 2 PODER CAMBIAR EL ESTADO DEL USUARIO, ACTIVO O INACTIVO
-            //SI LO DOY DE INACTIVO, TAMBIEN TIENE QUE
+            System.out.println("2. Modificar un Usuario");
             System.out.println("3. Buscar Usuario por ID");
             System.out.println("4. Buscar Usuario por Nombre de Usuario");
             System.out.println("5. Listar todos los usuarios");
